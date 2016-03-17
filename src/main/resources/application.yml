@@ -1,0 +1,10 @@
+spring:
+    application:
+        name: pinkpony
+    datasource:
+        driverClassName: org.postgresql.Driver
+        url: jdbc:postgresql://localhost/pinkponydev
+        username: neo_test
+        password:
+server:
+    port: 8080
