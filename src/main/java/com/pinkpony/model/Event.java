@@ -11,15 +11,15 @@ public class Event implements Serializable{
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    Integer id;
+    Long id;
 
     String name;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
