@@ -1,7 +1,7 @@
 ---
 applications:
   - name: dev-pinkpony
-    path: target/pinkpony-0.0.1-SNAPSHOT.jar ## comment... default/ respecify after circleci
+    path: target/pinkpony.jar
     buildpack: java_buildpack
     services:
       - dev-pinkturtle
