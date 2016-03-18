@@ -38,7 +38,7 @@ public class EventCrudTest {
 
     @Before
     public void setUp() {
-        //RestAssured.port = port;
+        RestAssured.port = port;
     }
 
     @Test
@@ -52,12 +52,12 @@ public class EventCrudTest {
         event.setEventDateTime("2016-03-18 14:33:00");
         event.setOrganizer("Joe");
 
-        given().port(port).log().all().
-                contentType(ContentType.JSON).
+        given().
+            contentType(ContentType.JSON).
             body(mapper.writeValueAsString(event)).
-        when().
+            when().
             post("/events").
-        then().
+            then().
             statusCode(201).
             body("name", equalTo("BG Night")).
             body("description", equalTo("A Big Night of Eventness")).
