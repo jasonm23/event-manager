@@ -21,7 +21,7 @@ public class Event implements Serializable{
 
     String name;
     String description;
-    Date eventDateTime;
+    Date eventDateTimeUTC;
     String organizer;
     String venue;
 
@@ -39,12 +39,12 @@ public class Event implements Serializable{
         this.venue = venue;
     }
 
-    public String getEventDateTime() {
-        return df.format(eventDateTime);
+    public String getEventDateTimeUTC() {
+        return df.format(eventDateTimeUTC);
     }
 
-    public void setEventDateTime(String eventDateTime) throws ParseException {
-        this.eventDateTime = df.parse(eventDateTime);
+    public void setEventDateTimeUTC(String eventDateTimeUTC) throws ParseException {
+        this.eventDateTimeUTC = df.parse(eventDateTimeUTC);
     }
 
     public String getDescription() {
