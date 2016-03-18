@@ -1,6 +1,7 @@
 package com.pinkpony.model;
 
 import javax.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,6 +13,9 @@ import java.util.List;
 @Entity
 public class Event implements Serializable {
 
+    private static final String FORMAT_STRING = "yyyy-MM-dd HH:mm:ss";
+    public final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
@@ -20,12 +24,20 @@ public class Event implements Serializable {
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private String name;
+    private String description;
 
     String name;
     String description;
+    @DateTimeFormat(pattern=FORMAT_STRING)
     Date eventDateTimeUTC;
     String organizer;
     String venue;
+
+    public Event(){}
+    public Event(String name){
+        this.name = name;
+    }
 
     public String getVenue() {
         return venue;
