@@ -6,7 +6,9 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.Event;
+import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.EventRepository;
+import com.pinkpony.repository.RsvpRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +36,10 @@ public class EventCrudTest {
     @Autowired
     EventRepository eventRepository;
 
-    Event event;
+    @Autowired
+    RsvpRepository rsvpRepository;
+
+    Event existingEvent;
     String eventDate = "2016-04-18T14:33:00";
 
     @Value("${local.server.port}")
@@ -44,31 +49,38 @@ public class EventCrudTest {
     public void setUp() throws ParseException {
         RestAssured.port = port;
 
-        event = new Event();
-        event.setName("BG Night");
-        event.setDescription("A Big Night of Eventness");
-        event.setVenue("That amazing place");
-        event.setEventDateTimeUTC(eventDate);
-        event.setOrganizer("Joe");
-        eventRepository.save(event);
+        existingEvent = new Event();
+        existingEvent.setName("BG Night");
+        existingEvent.setDescription("A Big Night of Eventness");
+        existingEvent.setVenue("That amazing place");
+        existingEvent.setEventDateTimeUTC(eventDate);
+        existingEvent.setOrganizer("Joe");
+        eventRepository.save(existingEvent);
     }
 
     @Test
     public void createEvent() throws JsonProcessingException, ParseException {
         ObjectMapper  mapper = new ObjectMapper();
 
+        Event newEvent = new Event();
+        newEvent.setName("Spring Boot Night");
+        newEvent.setDescription("Wanna learn how to boot?");
+        newEvent.setVenue("Arrowhead Lounge");
+        newEvent.setEventDateTimeUTC(eventDate);
+        newEvent.setOrganizer("Holly");
+
         given().
             contentType(ContentType.JSON).
-            body(mapper.writeValueAsString(event)).
+            body(mapper.writeValueAsString(newEvent)).
         when().
             post("/events").
         then().
             statusCode(201).
-            body("name", equalTo("BG Night")).
-            body("description", equalTo("A Big Night of Eventness")).
-            body("venue", equalTo("That amazing place")).
+            body("name", equalTo("Spring Boot Night")).
+            body("description", equalTo("Wanna learn how to boot?")).
+            body("venue", equalTo("Arrowhead Lounge")).
             body("eventDateTimeUTC", equalTo(eventDate)).
-            body("organizer", equalTo("Joe"));
+            body("organizer", equalTo("Holly"));
     }
 
     @Test
@@ -78,7 +90,7 @@ public class EventCrudTest {
         HashMap<String, String> body = new HashMap<>();
         body.put("name", "Gabe");
         body.put("response", "yes");
-        body.put("event", String.format("http://localhost:%s/events/%s", port, event.getId()));
+        body.put("event", String.format("http://localhost:%s/events/%s", port, existingEvent.getId()));
 
         given().log().all().
             contentType(ContentType.JSON).
@@ -89,6 +101,19 @@ public class EventCrudTest {
             statusCode(201).
             body("name", equalTo("Gabe")).
             body("response", equalTo("yes"));
+    }
+
+    @Test
+    public void eventsListWithRSVPs() {
+
+    }
+
+    private void createTestRsvp(String name, String response) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setName(name);
+        rsvp.setResponse(response);
+
+        rsvpRepository.save(rsvp);
     }
 
 }

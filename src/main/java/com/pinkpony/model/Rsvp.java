@@ -1,5 +1,7 @@
 package com.pinkpony.model;
 
+import org.springframework.data.rest.core.annotation.RestResource;
+
 import javax.annotation.Generated;
 import javax.persistence.*;
 
@@ -10,6 +12,10 @@ public class Rsvp {
     Long id;
     String name;
     String response;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    Event event;
 
     public String getName() {
         return name;

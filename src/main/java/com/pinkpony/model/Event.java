@@ -12,14 +12,14 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Event implements Serializable{
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
 
-    @OneToMany
-    private List<Rsvp> rsvps = new ArrayList<Rsvp>();
+    @OneToMany(orphanRemoval = true, mappedBy = "event")
+    public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
