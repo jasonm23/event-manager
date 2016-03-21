@@ -76,7 +76,7 @@ public class EventCrudTest {
 
         HashMap<String, String> body = new HashMap<>();
         body.put("name", "Gabe");
-        body.put("rsvp", "yes");
+        body.put("response", "yes");
         body.put("event", String.format("http://localhost:%s/events/%s", port, event.getId()));
 
         given().log().all().
