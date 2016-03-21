@@ -1,14 +1,15 @@
 package com.pinkpony.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.rest.core.annotation.RestResource;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Event implements Serializable{
@@ -17,19 +18,16 @@ public class Event implements Serializable{
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
 
-    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    @OneToMany
+    private List<Rsvp> rsvps = new ArrayList<Rsvp>();
+
+    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     String name;
     String description;
     Date eventDateTimeUTC;
     String organizer;
     String venue;
-
-    public Event(){}
-
-    public Event(String name){
-        this.name = name;
-    }
 
     public String getVenue() {
         return venue;
