@@ -18,7 +18,7 @@ public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
@@ -27,12 +27,8 @@ public class Event implements Serializable {
     private String name;
     private String description;
 
-    String name;
-    String description;
     @DateTimeFormat(pattern=FORMAT_STRING)
-    Date eventDateTimeUTC;
-    String organizer;
-    String venue;
+    private Date eventDateTimeUTC;
 
     public Event(){}
     public Event(String name){
@@ -48,11 +44,11 @@ public class Event implements Serializable {
     }
 
     public String getEventDateTimeUTC() {
-        return df.format(eventDateTimeUTC);
+        return dateFormat.format(eventDateTimeUTC);
     }
 
     public void setEventDateTimeUTC(String eventDateTimeUTC) throws ParseException {
-        this.eventDateTimeUTC = df.parse(eventDateTimeUTC);
+        this.eventDateTimeUTC = dateFormat.parse(eventDateTimeUTC);
     }
 
     public String getDescription() {
