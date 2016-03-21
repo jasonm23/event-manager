@@ -15,7 +15,8 @@ public class Rsvp {
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    Event event;
+    public Event event;
+
 
     public String getName() {
         return name;
