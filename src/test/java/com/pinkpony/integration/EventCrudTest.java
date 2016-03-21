@@ -9,6 +9,7 @@ import com.pinkpony.model.Event;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.EventRepository;
 import com.pinkpony.repository.RsvpRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -56,6 +58,13 @@ public class EventCrudTest {
         existingEvent.setEventDateTimeUTC(eventDate);
         existingEvent.setOrganizer("Joe");
         eventRepository.save(existingEvent);
+    }
+
+    @After
+    public void tearDown() {
+        //TODO: why is this not doing whast we think?
+        rsvpRepository.deleteAll();
+        eventRepository.deleteAll();
     }
 
     @Test

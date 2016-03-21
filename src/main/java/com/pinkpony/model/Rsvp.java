@@ -1,7 +1,5 @@
 package com.pinkpony.model;
 
-import org.springframework.data.rest.core.annotation.RestResource;
-
 import javax.annotation.Generated;
 import javax.persistence.*;
 
