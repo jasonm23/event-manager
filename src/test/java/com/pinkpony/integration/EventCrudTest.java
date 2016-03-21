@@ -56,7 +56,7 @@ public class EventCrudTest {
             body("name", equalTo("BG Night")).
             body("description", equalTo("A Big Night of Eventness")).
             body("venue", equalTo("That amazing place")).
-            body("eventDateTime", equalTo("2016-03-18 14:33:00")).
+            body("eventDateTimeUTC", equalTo("2016-03-18 14:33:00")).
             body("organizer", equalTo("Joe"));
     }
 
