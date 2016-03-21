@@ -20,6 +20,9 @@ public class EventValidator implements Validator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "event.name.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "event.description.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "eventDateTimeUTC", "event.eventDateTimeUTC.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "event.venue.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "organizer", "event.organizer.field.empty");
 
         Event event = (Event) obj;
 

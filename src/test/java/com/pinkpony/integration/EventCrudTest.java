@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.Response;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.Event;
 import com.pinkpony.model.Rsvp;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -46,6 +50,9 @@ public class EventCrudTest {
     Event existingEvent;
     String eventDate = "2016-04-18T14:33:00";
 
+    @Autowired
+    MessageSource messageSource;
+
     @Value("${local.server.port}")
     int port;
 
@@ -69,9 +76,7 @@ public class EventCrudTest {
         eventRepository.deleteAll();
     }
 
-    @Test
-    public void createEvent() throws JsonProcessingException, ParseException {
-        ObjectMapper  mapper = new ObjectMapper();
+    private Event getEvent() throws Exception{
 
         Event newEvent = new Event();
         newEvent.setName("Spring Boot Night");
@@ -79,6 +84,15 @@ public class EventCrudTest {
         newEvent.setVenue("Arrowhead Lounge");
         newEvent.setEventDateTimeUTC(eventDate);
         newEvent.setOrganizer("Holly");
+
+        return event;
+    }
+
+    @Test
+    public void createEvent() throws Exception {
+        ObjectMapper  mapper = new ObjectMapper();
+
+        Event event = getEvent();
 
         given().
             contentType(ContentType.JSON).
@@ -183,4 +197,108 @@ public class EventCrudTest {
         return rsvp;
     }
 
+    @Test
+    public void badRequestOnMissingNameField() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Event event = getEvent();
+        event.setName(null);
+
+        given().
+            contentType(ContentType.JSON).
+            body(mapper.writeValueAsString(event)).
+        when().
+            post("/events").
+        then().
+            statusCode(400).
+            body("errors", hasSize(1)).
+            body("errors[0].entity", equalTo("Event")).
+            body("errors[0].message", equalTo(messageSource.getMessage("event.name.field.empty", null, LocaleContextHolder.getLocale()))).
+            body("errors[0].property", equalTo("name")).
+            body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
+    public void badRequestOnMissingDescriptionField() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Event event = getEvent();
+        event.setDescription(null);
+
+        given().
+                contentType(ContentType.JSON).
+                body(mapper.writeValueAsString(event)).
+                when().
+                post("/events").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.description.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("description")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
+    public void badRequestOnMissingEventDateTimeUTCField() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Event event = getEvent();
+        event.setEventDateTimeUTC("");
+
+        given().
+                contentType(ContentType.JSON).
+                body(mapper.writeValueAsString(event)).
+                when().
+                post("/events").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTimeUTC.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("eventDateTimeUTC")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
+    public void badRequestOnMissingVenueField() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Event event = getEvent();
+        event.setVenue(null);
+
+        given().
+                contentType(ContentType.JSON).
+                body(mapper.writeValueAsString(event)).
+                when().
+                post("/events").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.venue.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("venue")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
+    public void badRequestOnMissingOrganizerField() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Event event = getEvent();
+        event.setOrganizer(null);
+
+        given().
+                contentType(ContentType.JSON).
+                body(mapper.writeValueAsString(event)).
+                when().
+                post("/events").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.organizer.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("organizer")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
 }
