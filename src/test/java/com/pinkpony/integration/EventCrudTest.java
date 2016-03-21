@@ -49,9 +49,9 @@ public class EventCrudTest {
         given().
             contentType(ContentType.JSON).
             body(mapper.writeValueAsString(event)).
-            when().
+        when().
             post("/events").
-            then().
+        then().
             statusCode(201).
             body("name", equalTo("BG Night")).
             body("description", equalTo("A Big Night of Eventness")).
