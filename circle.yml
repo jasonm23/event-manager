@@ -19,7 +19,7 @@ test:
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
     - cf api https://api.run.pivotal.io
     - cf auth $PWS_USER $PWS_PASSWORD
-    - cf target -o $PWS_ORG -s dev-pinkpony
+    - cf target -o 'Labs Singapore' -s dev-pinkpony
     - cf a
 
 deployment:
