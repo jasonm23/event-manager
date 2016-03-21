@@ -1,10 +1,13 @@
 package com.pinkpony.config;
 
-import com.pinkpony.validator.EventValidator;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AppConfig {
+public class AppConfig implements InitializingBean{
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
 }

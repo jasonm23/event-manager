@@ -241,14 +241,29 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingEventDateTimeUTCField() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Event event = getEvent();
-        event.setEventDateTimeUTC("");
+        String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
 
         given().
                 contentType(ContentType.JSON).
-                body(mapper.writeValueAsString(event)).
+                body(jsonInput).
+                when().
+                post("/events").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTimeUTC.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("eventDateTimeUTC")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
+    public void badRequestOnBlankEventDateTimeUTCField() throws Exception {
+        String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"eventDateTimeUTC\":\"\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+
+        given().
+                contentType(ContentType.JSON).
+                body(jsonInput).
                 when().
                 post("/events").
                 then().

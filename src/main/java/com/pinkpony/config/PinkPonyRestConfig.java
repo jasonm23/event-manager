@@ -20,4 +20,6 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
     }
         validatingListener.addValidator("beforeCreate", new EventValidator());
     }
+
+
 }

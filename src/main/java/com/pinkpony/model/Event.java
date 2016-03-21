@@ -2,6 +2,11 @@ package com.pinkpony.model;
 
 import javax.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,6 +33,7 @@ public class Event implements Serializable {
     private String description;
 
     @DateTimeFormat(pattern=FORMAT_STRING)
+    @NotNull
     private Date eventDateTimeUTC;
 
     public Event(){}
@@ -46,6 +52,7 @@ public class Event implements Serializable {
     public String getEventDateTimeUTC() {
         return dateFormat.format(eventDateTimeUTC);
     }
+
 
     public void setEventDateTimeUTC(String eventDateTimeUTC) throws ParseException {
         this.eventDateTimeUTC = dateFormat.parse(eventDateTimeUTC);
