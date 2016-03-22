@@ -10,11 +10,17 @@ public class Rsvp {
     Long id;
     String name;
     String response;
-
     @ManyToOne
     @JoinColumn(name = "event_id")
     public Event event;
 
+//    public Event getEvent() {
+//        return event;
+//    }
+//
+//    public void setEvent(Event event) {
+//        this.event = event;
+//    }
 
     public String getName() {
         return name;

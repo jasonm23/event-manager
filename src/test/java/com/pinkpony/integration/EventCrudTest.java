@@ -26,7 +26,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -95,32 +95,49 @@ public class EventCrudTest {
     @Test
     public void rsvpYes() throws JsonProcessingException, ParseException {
         ObjectMapper  mapper = new ObjectMapper();
+        String eventUri = String.format("http://localhost:%s/events/%s", port, existingEvent.getId());
 
         HashMap<String, String> body = new HashMap<>();
         body.put("name", "Gabe");
         body.put("response", "yes");
-        body.put("event", String.format("http://localhost:%s/events/%s", port, existingEvent.getId()));
+        body.put("event", eventUri);
 
-        given().log().all().
+        given().
             contentType(ContentType.JSON).
             body(mapper.writeValueAsString(body)).
         when().
-            post(String.format("/rsvps")).
+            post("/rsvps").
         then().
             statusCode(201).
+            body("_links.event.href", containsString("/event")).
             body("name", equalTo("Gabe")).
             body("response", equalTo("yes"));
     }
 
     @Test
     public void eventsListWithRSVPs() {
+        // When an event has RSVPs...
+        createTestRsvp("Billy", "Yes");
+        createTestRsvp("Sarah", "Yes");
+        createTestRsvp("Jo", "No");
+        createTestRsvp("Colin", "Yes");
+        createTestRsvp("Trudy", "No");
+        createTestRsvp("Heng", "No");
 
+        given().
+            contentType(ContentType.JSON).
+        when().
+            get(String.format("/events/%s/rsvps", existingEvent.getId())).
+        then().log().all().
+            statusCode(200).
+            body("_embedded.rsvps", hasKey("href"));
     }
 
     private void createTestRsvp(String name, String response) {
         Rsvp rsvp = new Rsvp();
         rsvp.setName(name);
         rsvp.setResponse(response);
+        rsvp.event = existingEvent;
 
         rsvpRepository.save(rsvp);
     }
