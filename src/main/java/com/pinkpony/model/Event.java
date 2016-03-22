@@ -2,6 +2,7 @@ package com.pinkpony.model;
 
 import javax.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +33,7 @@ public class Event implements Serializable {
     private String name;
     private String description;
 
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     @DateTimeFormat(pattern=FORMAT_STRING)
     @NotNull
     private Date eventDateTimeUTC;
@@ -49,21 +51,20 @@ public class Event implements Serializable {
         this.venue = venue;
     }
 
-    public String getEventDateTimeUTC() {
-        return dateFormat.format(eventDateTimeUTC);
-    }
-
-
-    public void setEventDateTimeUTC(String eventDateTimeUTC) throws ParseException {
-        this.eventDateTimeUTC = dateFormat.parse(eventDateTimeUTC);
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getEventDateTimeUTC() {
+        return eventDateTimeUTC;
+    }
+
+    public void setEventDateTimeUTC(Date eventDateTimeUTC) {
+        this.eventDateTimeUTC = eventDateTimeUTC;
     }
 
     public String getOrganizer() {

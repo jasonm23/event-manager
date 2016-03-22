@@ -15,6 +15,7 @@ import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.EventRepository;
 import com.pinkpony.repository.RsvpRepository;
 import org.junit.After;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,12 +29,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -47,8 +52,11 @@ public class EventCrudTest {
     @Autowired
     RsvpRepository rsvpRepository;
 
+    private static final String FORMAT_STRING = "yyyy-MM-dd HH:mm:ssZ";
+    private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
     Event existingEvent;
-    String eventDate = "2016-04-18T14:33:00";
+    Date eventDate = dateFormat.parse("2016-03-18 14:33:00+0000");
+
 
     @Autowired
     MessageSource messageSource;
@@ -240,6 +248,19 @@ public class EventCrudTest {
     }
 
     @Test
+    public void okRequestOnValidEventDateTimeUTCFieldString() throws Exception {
+        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTimeUTC\":\"2015-03-11T11:00:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+
+        given().
+                contentType(ContentType.JSON).
+                body(jsonInput).
+                when().
+                post("/events").
+                then().
+                statusCode(201);
+    }
+
+    @Test
     public void badRequestOnMissingEventDateTimeUTCField() throws Exception {
         String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
 
@@ -268,11 +289,11 @@ public class EventCrudTest {
                 post("/events").
                 then().
                 statusCode(400).
-                body("errors", hasSize(1));
-//                body("errors[0].entity", equalTo("Event")).
-//                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTimeUTC.field.empty", null, LocaleContextHolder.getLocale()))).
-//                body("errors[0].property", equalTo("eventDateTimeUTC")).
-//                body("errors[0].invalidValue", equalTo("null"));
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Event")).
+                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTimeUTC.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("eventDateTimeUTC")).
+                body("errors[0].invalidValue", equalTo("null"));
     }
 
     @Test
