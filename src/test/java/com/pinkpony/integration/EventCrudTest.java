@@ -93,7 +93,7 @@ public class EventCrudTest {
     }
 
     @Test
-    public void rsvpYes() throws JsonProcessingException, ParseException {
+    public void createRsvp() throws JsonProcessingException, ParseException {
         ObjectMapper  mapper = new ObjectMapper();
         String eventUri = String.format("http://localhost:%s/events/%s", port, existingEvent.getId());
 
@@ -128,11 +128,27 @@ public class EventCrudTest {
             contentType(ContentType.JSON).
         when().
             get(String.format("/events/%s/rsvps", existingEvent.getId())).
-        then().log().all().
+        then().
             statusCode(200).
-            body("_embedded.rsvps", hasKey("href"));
+            body("_embedded.rsvps[0].name", containsString("Billy")).
+            body("_embedded.rsvps[0].response", containsString("Yes")).
+            body("_embedded.rsvps[1].name", containsString("Sarah")).
+            body("_embedded.rsvps[1].response", containsString("Yes")).
+            body("_embedded.rsvps[2].name", containsString("Jo")).
+            body("_embedded.rsvps[2].response", containsString("No")).
+            body("_embedded.rsvps[3].name", containsString("Colin")).
+            body("_embedded.rsvps[3].response", containsString("Yes")).
+            body("_embedded.rsvps[4].name", containsString("Trudy")).
+            body("_embedded.rsvps[4].response", containsString("No")).
+            body("_embedded.rsvps[5].name", containsString("Heng")).
+            body("_embedded.rsvps[5].response", containsString("No"));
     }
 
+//    @Test
+//
+////    public void editEvent() {}
+//    public void editRsvp() {}
+//
     private void createTestRsvp(String name, String response) {
         Rsvp rsvp = new Rsvp();
         rsvp.setName(name);
