@@ -34,7 +34,5 @@ public class EventValidator implements Validator {
         } catch (Exception ex) {
             errors.rejectValue("eventDateTimeString", "event.eventDateTime.field.invalid");
         }
-
-        System.out.println(obj.toString());
     }
 }

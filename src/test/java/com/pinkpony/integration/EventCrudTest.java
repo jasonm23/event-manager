@@ -98,13 +98,11 @@ public class EventCrudTest {
 
     @Test
     public void createEvent() throws Exception {
-        ObjectMapper  mapper = new ObjectMapper();
-
-        Event event = getEvent();
+        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
 
         given().
             contentType(ContentType.JSON).
-            body(mapper.writeValueAsString(newEvent)).
+            body(jsonInput).
         when().
             post("/events").
         then().
@@ -207,14 +205,11 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingNameField() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Event event = getEvent();
-        event.setName(null);
+        String jsonInput = "{\"id\":null,\"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
 
         given().
             contentType(ContentType.JSON).
-            body(mapper.writeValueAsString(event)).
+            body(jsonInput).
         when().
             post("/events").
         then().
@@ -228,14 +223,11 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingDescriptionField() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Event event = getEvent();
-        event.setDescription(null);
+        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2015-03-11T11:00:00+0000\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
 
         given().
                 contentType(ContentType.JSON).
-                body(mapper.writeValueAsString(event)).
+                body(jsonInput).
                 when().
                 post("/events").
                 then().
@@ -271,11 +263,15 @@ public class EventCrudTest {
                 post("/events").
                 then().
                 statusCode(400).
-                body("errors", hasSize(1)).
+                body("errors", hasSize(2)).
                 body("errors[0].entity", equalTo("Event")).
                 body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("eventDateTime")).
-                body("errors[0].invalidValue", equalTo("null"));
+                body("errors[0].property", equalTo("eventDateTimeString")).
+                body("errors[0].invalidValue", equalTo("null")).
+                body("errors[1].entity", equalTo("Event")).
+                body("errors[1].message", equalTo(messageSource.getMessage("event.eventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
+                body("errors[1].property", equalTo("eventDateTimeString")).
+                body("errors[1].invalidValue", equalTo("null"));
     }
 
     @Test
@@ -289,11 +285,15 @@ public class EventCrudTest {
                 post("/events").
                 then().
                 statusCode(400).
-                body("errors", hasSize(1)).
+                body("errors", hasSize(2)).
                 body("errors[0].entity", equalTo("Event")).
                 body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("eventDateTime")).
-                body("errors[0].invalidValue", equalTo("null"));
+                body("errors[0].property", equalTo("eventDateTimeString")).
+                body("errors[0].invalidValue", equalTo("")).
+                body("errors[1].entity", equalTo("Event")).
+                body("errors[1].message", equalTo(messageSource.getMessage("event.eventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
+                body("errors[1].property", equalTo("eventDateTimeString")).
+                body("errors[1].invalidValue", equalTo(""));
     }
 
     @Test
@@ -309,21 +309,18 @@ public class EventCrudTest {
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("Event")).
-                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("eventDateTime")).
-                body("errors[0].invalidValue", equalTo("null"));
+                body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("eventDateTimeString")).
+                body("errors[0].invalidValue", equalTo("2015-03-11T11:00:00"));
     }
 
     @Test
     public void badRequestOnMissingVenueField() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Event event = getEvent();
-        event.setVenue(null);
+        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\"}";
 
         given().
                 contentType(ContentType.JSON).
-                body(mapper.writeValueAsString(event)).
+                body(jsonInput).
                 when().
                 post("/events").
                 then().
@@ -337,14 +334,11 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingOrganizerField() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        Event event = getEvent();
-        event.setOrganizer(null);
+        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"venue\":\"That amazing place\"}";
 
         given().
                 contentType(ContentType.JSON).
-                body(mapper.writeValueAsString(event)).
+                body(jsonInput).
                 when().
                 post("/events").
                 then().
@@ -367,15 +361,19 @@ public class EventCrudTest {
                 post("/events").
                 then().
                 statusCode(400).
-                body("errors", hasSize(2)).
+                body("errors", hasSize(3)).
                 body("errors[0].entity", equalTo("Event")).
                 body("errors[0].message", equalTo(messageSource.getMessage("event.name.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[0].property", equalTo("name")).
                 body("errors[0].invalidValue", equalTo("null")).
                 body("errors[1].entity", equalTo("Event")).
                 body("errors[1].message", equalTo(messageSource.getMessage("event.eventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[1].property", equalTo("eventDateTime")).
-                body("errors[1].invalidValue", equalTo("null"));
+                body("errors[1].property", equalTo("eventDateTimeString")).
+                body("errors[1].invalidValue", equalTo("")).
+                body("errors[2].entity", equalTo("Event")).
+                body("errors[2].message", equalTo(messageSource.getMessage("event.eventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
+                body("errors[2].property", equalTo("eventDateTimeString")).
+                body("errors[2].invalidValue", equalTo(""));
 
     }
 }
