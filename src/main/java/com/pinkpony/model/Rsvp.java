@@ -5,6 +5,9 @@ import javax.persistence.*;
 
 @Entity
 public class Rsvp {
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    public Event event;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
@@ -25,5 +28,9 @@ public class Rsvp {
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

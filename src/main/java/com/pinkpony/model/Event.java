@@ -1,7 +1,5 @@
 package com.pinkpony.model;
 
-import org.springframework.data.rest.core.annotation.RestResource;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -12,14 +10,14 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Event implements Serializable{
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
 
-    @OneToMany
-    private List<Rsvp> rsvps = new ArrayList<Rsvp>();
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
