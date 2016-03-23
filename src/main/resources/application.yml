@@ -48,7 +48,7 @@ logging:
 # NOTE: Can use an integrated yml profile - instead of the java -circleci.properties file.
 ---
 spring:
-  profile: circleci
+  profiles: circleci
 
   application:
     name: pinkpony
