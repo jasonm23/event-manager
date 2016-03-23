@@ -27,7 +27,7 @@ public class Rsvp {
     }
 
     public void setResponse(String response) {
-        this.response = response;
+        this.response = response.toLowerCase();
     }
 
     public Long getId() {
