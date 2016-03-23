@@ -32,7 +32,6 @@ import static org.hamcrest.Matchers.*;
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
-@ActiveProfiles(profiles = "test")
 public class EventCrudTest {
 
     @Autowired
