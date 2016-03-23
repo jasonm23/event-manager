@@ -23,7 +23,7 @@ public class EventValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "event.name.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "event.description.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "eventDateTimeString", "event.eventDateTimeString.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "eventDateTimeString", "event.eventDateTime.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "event.venue.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "organizer", "event.organizer.field.empty");
 
@@ -32,7 +32,7 @@ public class EventValidator implements Validator {
             Date date = dateFormat.parse(event.getEventDateTimeString());
             event.setEventDateTime(date);
         } catch (Exception ex) {
-            errors.rejectValue("eventDateTimeString", "event.eventDateTimeString.field.invalid");
+            errors.rejectValue("eventDateTimeString", "event.eventDateTime.field.invalid");
         }
 
         System.out.println(obj.toString());

@@ -39,6 +39,7 @@ public class Event implements Serializable {
     @JsonIgnore
     private Date eventDateTime;
 
+    @JsonProperty("eventDateTime")
     private String eventDateTimeString;
     private String organizer;
     private String venue;
