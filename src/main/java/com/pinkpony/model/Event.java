@@ -3,8 +3,11 @@ package com.pinkpony.model;
 import javax.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.Transient;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
@@ -19,8 +22,8 @@ import java.util.List;
 @Entity
 public class Event implements Serializable {
 
-    private static final String FORMAT_STRING = "yyyy-MM-dd HH:mm:ss";
-    public final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
+    public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -33,14 +36,24 @@ public class Event implements Serializable {
     private String name;
     private String description;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
-    @DateTimeFormat(pattern=FORMAT_STRING)
-    @NotNull
-    private Date eventDateTimeUTC;
+    @JsonIgnore
+    private Date eventDateTime;
+
+    private String eventDateTimeString;
+    private String organizer;
+    private String venue;
 
     public Event(){}
     public Event(String name){
         this.name = name;
+    }
+
+    public String getEventDateTimeString() {
+        return eventDateTimeString;
+    }
+
+    public void setEventDateTimeString(String eventDateTimeString) {
+        this.eventDateTimeString = eventDateTimeString;
     }
 
     public String getVenue() {
@@ -59,12 +72,12 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Date getEventDateTimeUTC() {
-        return eventDateTimeUTC;
+    public Date getEventDateTime() {
+        return eventDateTime;
     }
 
-    public void setEventDateTimeUTC(Date eventDateTimeUTC) {
-        this.eventDateTimeUTC = eventDateTimeUTC;
+    public void setEventDateTime(Date eventDateTime) {
+        this.eventDateTime = eventDateTime;
     }
 
     public String getOrganizer() {

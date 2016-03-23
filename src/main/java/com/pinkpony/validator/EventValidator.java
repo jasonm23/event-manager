@@ -6,9 +6,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EventValidator implements Validator {
+
+    private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -17,19 +21,20 @@ public class EventValidator implements Validator {
 
     @Override
     public void validate(Object obj, Errors errors) {
-
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "event.name.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "event.description.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "eventDateTimeUTC", "event.eventDateTimeUTC.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "eventDateTimeString", "event.eventDateTimeString.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "event.venue.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "organizer", "event.organizer.field.empty");
 
-        Event event = (Event) obj;
+        Event event = (Event)obj;
+        try {
+            Date date = dateFormat.parse(event.getEventDateTimeString());
+            event.setEventDateTime(date);
+        } catch (Exception ex) {
+            errors.rejectValue("eventDateTimeString", "event.eventDateTimeString.field.invalid");
+        }
 
-
-//      String organizer;
-
-//      String venue;
-
+        System.out.println(obj.toString());
     }
 }
