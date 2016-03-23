@@ -144,18 +144,41 @@ public class EventCrudTest {
             body("_embedded.rsvps[5].response", containsString("No"));
     }
 
-//    @Test
-//
-////    public void editEvent() {}
-//    public void editRsvp() {}
-//
-    private void createTestRsvp(String name, String response) {
+    @Test
+    public void editEvent() {
+        given().
+            contentType(ContentType.JSON).
+            request().body("{\"name\":\"Mah Event Name is Changed\"}").
+        when().
+            patch(String.format("/events/%s", existingEvent.getId())).
+        then().log().all().
+            statusCode(200).
+            body("name", equalTo("Mah Event Name is Changed"));
+    }
+
+    @Test
+    public void editRsvp() {
+        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
+
+        given().
+            contentType(ContentType.JSON).
+            request().body("{\"name\":\"Bobby\",\"response\":\"no\"}").
+        when().
+            patch(String.format("/rsvps/%s", testRsvp.getId())).
+        then().log().all().
+            statusCode(200).
+            body("response", equalTo("no")).
+            body("name", equalTo("Bobby"));
+    }
+
+    private Rsvp createTestRsvp(String name, String response) {
         Rsvp rsvp = new Rsvp();
         rsvp.setName(name);
         rsvp.setResponse(response);
         rsvp.event = existingEvent;
 
         rsvpRepository.save(rsvp);
+        return rsvp;
     }
 
 }

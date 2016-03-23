@@ -5,22 +5,14 @@ import javax.persistence.*;
 
 @Entity
 public class Rsvp {
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    public Event event;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
     String name;
     String response;
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    public Event event;
-
-//    public Event getEvent() {
-//        return event;
-//    }
-//
-//    public void setEvent(Event event) {
-//        this.event = event;
-//    }
 
     public String getName() {
         return name;
@@ -36,5 +28,9 @@ public class Rsvp {
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
