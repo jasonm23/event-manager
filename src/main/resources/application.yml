@@ -46,14 +46,14 @@ logging:
   level.org.hibernate: ERROR
 
 # NOTE: Can use an integrated yml profile - instead of the java -circleci.properties file.
- ---
- spring:
-   profile: circleci
+---
+spring:
+  profile: circleci
 
-   application:
-     name: pinkpony
+  application:
+    name: pinkpony
 
-   datasource:
-     url: jdbc:postgresql://localhost:5432/ubuntu
-     username: ubuntu
-     password:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ubuntu
+    username: ubuntu
+    password:
