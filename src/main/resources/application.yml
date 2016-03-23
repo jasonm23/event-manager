@@ -58,3 +58,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/ubuntu
     username: ubuntu
     password:
+
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    format-sql: true
