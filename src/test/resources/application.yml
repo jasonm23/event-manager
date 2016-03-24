@@ -3,8 +3,8 @@ spring:
         name: pinkpony
     datasource:
         driverClassName: org.postgresql.Driver
-        url: jdbc:postgresql://localhost/pinkponytest
-        username: neo_test
+        url: jdbc:postgresql://localhost:5432/ubuntu
+        username: ubuntu
         password:
     jpa:
        hibernate:
