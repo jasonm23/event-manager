@@ -130,17 +130,17 @@ public class EventCrudTest {
         then().
             statusCode(200).
             body("_embedded.rsvps[0].name", containsString("Billy")).
-            body("_embedded.rsvps[0].response", containsString("Yes")).
+            body("_embedded.rsvps[0].response", containsString("yes")).
             body("_embedded.rsvps[1].name", containsString("Sarah")).
-            body("_embedded.rsvps[1].response", containsString("Yes")).
+            body("_embedded.rsvps[1].response", containsString("yes")).
             body("_embedded.rsvps[2].name", containsString("Jo")).
-            body("_embedded.rsvps[2].response", containsString("No")).
+            body("_embedded.rsvps[2].response", containsString("no")).
             body("_embedded.rsvps[3].name", containsString("Colin")).
-            body("_embedded.rsvps[3].response", containsString("Yes")).
+            body("_embedded.rsvps[3].response", containsString("yes")).
             body("_embedded.rsvps[4].name", containsString("Trudy")).
-            body("_embedded.rsvps[4].response", containsString("No")).
+            body("_embedded.rsvps[4].response", containsString("no")).
             body("_embedded.rsvps[5].name", containsString("Heng")).
-            body("_embedded.rsvps[5].response", containsString("No"));
+            body("_embedded.rsvps[5].response", containsString("no"));
     }
 
     @Test
