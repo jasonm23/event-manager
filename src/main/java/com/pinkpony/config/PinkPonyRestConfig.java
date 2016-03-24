@@ -13,11 +13,8 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
     @Override
     public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
         super.configureValidatingRepositoryEventListener(validatingListener);
-
-
         //Register our validator with the REST data event listener
         validatingListener.addValidator("beforeCreate", new RsvpValidator());
-    }
         validatingListener.addValidator("beforeCreate", new EventValidator());
     }
 
