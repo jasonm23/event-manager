@@ -1,21 +1,17 @@
 package com.pinkpony.integration;
 
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.Event;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.EventRepository;
 import com.pinkpony.repository.RsvpRepository;
 import org.junit.After;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,9 +31,10 @@ import java.util.HashMap;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.*;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -52,29 +48,24 @@ public class EventCrudTest {
     @Autowired
     RsvpRepository rsvpRepository;
 
+    @Autowired
+    MessageSource messageSource;
+
     private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
     Event existingEvent;
     String eventDateString = "2016-03-18T14:33:00+0000";
     Date eventDate;
 
-
-    @Autowired
-    MessageSource messageSource;
-
     @Value("${local.server.port}")
     int port;
+
+    static ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
         eventDate = dateFormat.parse(eventDateString);
-        existingEvent = new Event();
-        existingEvent.setName("BG Night");
-        existingEvent.setDescription("A Big Night of Eventness");
-        existingEvent.setVenue("That amazing place");
-        existingEvent.setEventDateTime(eventDate);
-        existingEvent.setOrganizer("Joe");
-        eventRepository.save(existingEvent);
+        existingEvent = eventRepository.save(makeEvent(eventDate));
     }
 
     @After
@@ -84,13 +75,12 @@ public class EventCrudTest {
         eventRepository.deleteAll();
     }
 
-    private Event getEvent() throws Exception{
-
+    private Event makeEvent(Date date) {
         Event newEvent = new Event();
         newEvent.setName("Spring Boot Night");
         newEvent.setDescription("Wanna learn how to boot?");
         newEvent.setVenue("Arrowhead Lounge");
-        newEvent.setEventDateTime(eventDate);
+        newEvent.setEventDateTime(date);
         newEvent.setOrganizer("Holly");
 
         return newEvent;
@@ -98,16 +88,17 @@ public class EventCrudTest {
 
     @Test
     public void createEvent() throws Exception {
-        String jsonInput = "{\"id\":null,"
-            +"\"name\":\"Spring Boot Night\","
-            +"\"eventDateTime\":\""+ eventDateString + "\","
-            +"\"description\":\"A Big Night of Eventness\","
-            +"\"organizer\":\"Joe\","
-            +"\"venue\":\"Arrowhead Lounge\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "Spring Boot Night");
+        params.put("eventDateTime", eventDateString);
+        params.put("description", "A Big Night of Eventness");
+        params.put("organizer", "Joe");
+        params.put("venue", "Arrowhead Lounge");
 
         given().
             contentType(ContentType.JSON).
-            body(jsonInput).
+            body(objectMapper.writeValueAsString(params)).
         when().
             post("/events").
         then().
@@ -121,17 +112,16 @@ public class EventCrudTest {
 
     @Test
     public void createRsvp() throws JsonProcessingException, ParseException {
-        ObjectMapper  mapper = new ObjectMapper();
         String eventUri = String.format("http://localhost:%s/events/%s", port, existingEvent.getId());
 
-        HashMap<String, String> body = new HashMap<>();
-        body.put("name", "Gabe");
-        body.put("response", "yes");
-        body.put("event", eventUri);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("name", "Gabe");
+        params.put("response", "yes");
+        params.put("event", eventUri);
 
         given().
             contentType(ContentType.JSON).
-            body(mapper.writeValueAsString(body)).
+            body(objectMapper.writeValueAsString(params)).
         when().
             post("/rsvps").
         then().
@@ -189,7 +179,7 @@ public class EventCrudTest {
 
         given().
             contentType(ContentType.JSON).
-            request().body("{\"name\":\"Bobby\",\"response\":\"no\"}").
+            request().body("{\"name\":\"Bobby\", \"response\":\"no\"}").
         when().
             patch(String.format("/rsvps/%s", testRsvp.getId())).
         then().
@@ -246,11 +236,16 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingDescriptionField() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2015-03-11T11:00:00+0000\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "name");
+        params.put("eventDateTime", "2015-03-11T11:00:00+0000");
+        params.put("organizer", "Joe");
+        params.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -264,11 +259,17 @@ public class EventCrudTest {
 
     @Test
     public void okRequestOnValidEventDateTimeFieldString() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2015-03-11T11:00:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "name");
+        params.put("description", "A Big Night of Eventness");
+        params.put("eventDateTime", "2015-03-11T11:00:00+0000");
+        params.put("organizer", "Joe");
+        params.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -277,11 +278,16 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingEventDateTimeField() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "name");
+        params.put("description", "A Big Night of Eventness");
+        params.put("organizer", "Joe");
+        params.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -295,11 +301,17 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnBlankEventDateTimeField() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"eventDateTime\":\"\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "name");
+        params.put("description", "A Big Night of Eventness");
+        params.put("organizer", "Joe");
+        params.put("venue", "That amazing place");
+        params.put("eventDateTime", "");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -312,12 +324,18 @@ public class EventCrudTest {
     }
 
     @Test
-    public void badRequestOnWrongFormattedEventDateTimeField() {
-        String jsonInput = "{\"id\":null,\"name\":\"name\",\"description\":\"A Big Night of Eventness\",\"eventDateTime\":\"2025-03-11T11:00:00\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+    public void badRequestOnWrongFormattedEventDateTimeField() throws JsonProcessingException {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "name");
+        params.put("description", "A Big Night of Eventness");
+        params.put("organizer", "Joe");
+        params.put("venue", "That amazing place");
+        params.put("eventDateTime", "2015-03-11T11:00:00");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -326,16 +344,21 @@ public class EventCrudTest {
                 body("errors[0].entity", equalTo("Event")).
                 body("errors[0].message", equalTo(messageSource.getMessage("event.eventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
                 body("errors[0].property", equalTo("eventDateTimeString")).
-                body("errors[0].invalidValue", equalTo("2025-03-11T11:00:00"));
+                body("errors[0].invalidValue", equalTo("2015-03-11T11:00:00"));
     }
 
     @Test
     public void badRequestOnMissingVenueField() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "Spring Boot Night");
+        params.put("eventDateTime", eventDateString);
+        params.put("description", "A Big Night of Eventness");
+        params.put("organizer", "Joe");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -349,11 +372,16 @@ public class EventCrudTest {
 
     @Test
     public void badRequestOnMissingOrganizerField() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"venue\":\"That amazing place\"}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("name", "Spring Boot Night");
+        params.put("eventDateTime", eventDateString);
+        params.put("description", "A Big Night of Eventness");
+        params.put("venue", "Arrowhead Lounge");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
@@ -366,12 +394,17 @@ public class EventCrudTest {
     }
 
     @Test
-    public void badRequestOnMultipleErrorsForField() {
-        String jsonInput = "{\"id\":null,\"description\":\"A Big Night of Eventness\",\"eventDateTime\":\"\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+    public void badRequestOnMultipleErrorsForField() throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", null);
+        params.put("description", "A Big Night of Eventness");
+        params.put("eventDateTime", "");
+        params.put("organizer", "Joe");
+        params.put("venue", "Arrowhead Lounge");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(objectMapper.writeValueAsString(params)).
                 when().
                 post("/events").
                 then().
