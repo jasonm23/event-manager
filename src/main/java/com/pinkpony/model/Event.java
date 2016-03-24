@@ -23,15 +23,12 @@ public class Event implements Serializable {
 
     public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
-
+    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Rsvp> rsvps = new ArrayList<Rsvp>();
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Rsvp> rsvps = new ArrayList<Rsvp>();
-
-    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private String name;
     private String description;
 
@@ -43,9 +40,20 @@ public class Event implements Serializable {
     private String organizer;
     private String venue;
 
+    private Boolean cancelled = false;
+
     public Event(){}
+
     public Event(String name){
         this.name = name;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     public String getEventDateTimeString() {
