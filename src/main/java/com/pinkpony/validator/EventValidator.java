@@ -28,11 +28,13 @@ public class EventValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "organizer", "event.organizer.field.empty");
 
         Event event = (Event)obj;
-        try {
-            Date date = dateFormat.parse(event.getEventDateTimeString());
-            event.setEventDateTime(date);
-        } catch (Exception ex) {
-            errors.rejectValue("eventDateTimeString", "event.eventDateTime.field.invalid");
+        if (!errors.hasFieldErrors("eventDateTimeString")) {
+            try {
+                Date date = dateFormat.parse(event.getEventDateTimeString());
+                event.setEventDateTime(date);
+            } catch (Exception ex) {
+                errors.rejectValue("eventDateTimeString", "event.eventDateTime.field.invalid");
+            }
         }
     }
 }
