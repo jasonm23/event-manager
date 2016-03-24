@@ -23,28 +23,6 @@ logging:
   level.org.springframework.web: DEBUG
   level.org.hibernate: ERROR
 
----
-spring:
-  profiles: test
-
-  application:
-        name: pinkpony
-
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost/pinkponytest
-    username: neo_test
-    password:
-
-  jpa:
-    hibernate.ddl-auto: update
-    show-sql: true
-    format-sql: true
-
-logging:
-  level.org.springframework.web: DEBUG
-  level.org.hibernate: ERROR
-
 # NOTE: Can use an integrated yml profile - instead of the java -circleci.properties file.
 ---
 spring:
