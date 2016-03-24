@@ -52,10 +52,10 @@ public class EventCrudTest {
     @Autowired
     RsvpRepository rsvpRepository;
 
-    private static final String FORMAT_STRING = "yyyy-MM-dd HH:mm:ssZ";
-    private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
+    private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
     Event existingEvent;
-    Date eventDate = dateFormat.parse("2016-03-18 14:33:00+0000");
+    String eventDateString = "2016-03-18T14:33:00+0000";
+    Date eventDate;
 
 
     @Autowired
@@ -67,12 +67,12 @@ public class EventCrudTest {
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
-
+        eventDate = dateFormat.parse(eventDateString);
         existingEvent = new Event();
         existingEvent.setName("BG Night");
         existingEvent.setDescription("A Big Night of Eventness");
         existingEvent.setVenue("That amazing place");
-        existingEvent.setEventDateTimeUTC(eventDate);
+        existingEvent.setEventDateTime(eventDate);
         existingEvent.setOrganizer("Joe");
         eventRepository.save(existingEvent);
     }
@@ -90,15 +90,20 @@ public class EventCrudTest {
         newEvent.setName("Spring Boot Night");
         newEvent.setDescription("Wanna learn how to boot?");
         newEvent.setVenue("Arrowhead Lounge");
-        newEvent.setEventDateTimeUTC(eventDate);
+        newEvent.setEventDateTime(eventDate);
         newEvent.setOrganizer("Holly");
 
-        return event;
+        return newEvent;
     }
 
     @Test
     public void createEvent() throws Exception {
-        String jsonInput = "{\"id\":null,\"name\":\"name\", \"eventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of Eventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        String jsonInput = "{\"id\":null,"
+            +"\"name\":\"Spring Boot Night\","
+            +"\"eventDateTime\":\""+ eventDateString + "\","
+            +"\"description\":\"A Big Night of Eventness\","
+            +"\"organizer\":\"Joe\","
+            +"\"venue\":\"Arrowhead Lounge\"}";
 
         given().
             contentType(ContentType.JSON).
@@ -108,10 +113,10 @@ public class EventCrudTest {
         then().
             statusCode(201).
             body("name", equalTo("Spring Boot Night")).
-            body("description", equalTo("Wanna learn how to boot?")).
+            body("description", equalTo("A Big Night of Eventness")).
             body("venue", equalTo("Arrowhead Lounge")).
-            body("eventDateTimeUTC", equalTo(eventDate)).
-            body("organizer", equalTo("Holly"));
+            body("eventDateTime", equalTo(eventDateString)).
+            body("organizer", equalTo("Joe"));
     }
 
     @Test
@@ -139,12 +144,12 @@ public class EventCrudTest {
     @Test
     public void eventsListWithRSVPs() {
         // When an event has RSVPs...
-        createTestRsvp("Billy", "Yes");
-        createTestRsvp("Sarah", "Yes");
-        createTestRsvp("Jo", "No");
-        createTestRsvp("Colin", "Yes");
-        createTestRsvp("Trudy", "No");
-        createTestRsvp("Heng", "No");
+        createTestRsvp("Billy", "yes");
+        createTestRsvp("Sarah", "yes");
+        createTestRsvp("Jo", "no");
+        createTestRsvp("Colin", "yes");
+        createTestRsvp("Trudy", "no");
+        createTestRsvp("Heng", "no");
 
         given().
             contentType(ContentType.JSON).
@@ -173,7 +178,7 @@ public class EventCrudTest {
             request().body("{\"name\":\"Mah Event Name is Changed\"}").
         when().
             patch(String.format("/events/%s", existingEvent.getId())).
-        then().log().all().
+        then().
             statusCode(200).
             body("name", equalTo("Mah Event Name is Changed"));
     }
@@ -187,7 +192,7 @@ public class EventCrudTest {
             request().body("{\"name\":\"Bobby\",\"response\":\"no\"}").
         when().
             patch(String.format("/rsvps/%s", testRsvp.getId())).
-        then().log().all().
+        then().
             statusCode(200).
             body("response", equalTo("no")).
             body("name", equalTo("Bobby"));

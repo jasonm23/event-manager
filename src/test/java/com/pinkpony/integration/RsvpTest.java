@@ -20,7 +20,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -40,19 +43,22 @@ public class RsvpTest {
     MessageSource messageSource;
 
     Event event;
-    String eventDate = "2016-04-18T14:33:00";
+    private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
+    String eventDateString = "2016-04-18T14:33:00+0000";
+    Date eventDate;
     @Value("${local.server.port}")
     int port;
 
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
+        eventDate = dateFormat.parse(eventDateString);
 
         event = new Event();
         event.setName("BG Night");
         event.setDescription("A Big Night of Eventness");
         event.setVenue("That amazing place");
-        event.setEventDateTimeUTC(eventDate);
+        event.setEventDateTime(eventDate);
         event.setOrganizer("Joe");
         eventRepository.save(event);
 
@@ -68,7 +74,7 @@ public class RsvpTest {
         body.setResponse("");
         //TODO: should we just test invalid post here? not all missing fields since this is duplicating the rsvpval unit tsts?
 
-        given().log().all().
+        given().
                 contentType(ContentType.JSON).
                 body(mapper.writeValueAsString(body)).
             when().
