@@ -1,7 +1,5 @@
 package com.pinkpony.integration;
 
-import static org.hamcrest.Matchers.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
@@ -26,15 +24,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.HashMap;
-
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
