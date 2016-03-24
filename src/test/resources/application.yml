@@ -20,3 +20,21 @@ logging:
   level.org.springframework.web: DEBUG
   level.org.hibernate: ERROR
 
+---
+spring:
+  profiles: circleci
+
+  application:
+    name: pinkpony
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ubuntu
+    username: ubuntu
+    password:
+
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    format-sql: true
+
