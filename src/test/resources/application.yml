@@ -4,7 +4,7 @@ spring:
     datasource:
         driverClassName: org.postgresql.Driver
         url: jdbc:postgresql://localhost/pinkponytest
-        username: neo_test
+        username: ubuntu
         password:
     jpa:
        hibernate:
