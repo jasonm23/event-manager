@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class RsvpTest {
 
     @Test
-    public void testSetResponseLowercasesValue() throws Exception {
+    public void setResponseLowercasesValue() throws Exception {
         Rsvp rsvp = new Rsvp();
         rsvp.setResponse("YES");
         assertEquals("yes", rsvp.getResponse());
