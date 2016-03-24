@@ -11,21 +11,15 @@ import static org.junit.Assert.*;
 
 public class RsvpValidatorTest {
     RsvpValidator validator;
-    Rsvp rsvp;
 
     @Before
     public void setUp() {
         validator = new RsvpValidator();
-
-        rsvp = new Rsvp();
-        rsvp.setName("Hermione");
-        rsvp.setResponse("yes");
     }
 
     @Test
     public void validateBlanks() throws Exception {
-        rsvp.setName("");
-        rsvp.setResponse("");
+        Rsvp rsvp = makeRsvp("", "");
 
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
         validator.validate(rsvp, errors);
@@ -37,7 +31,7 @@ public class RsvpValidatorTest {
 
     @Test
     public void validateResponse() throws Exception {
-        rsvp.setResponse("invalid");
+        Rsvp rsvp = makeRsvp("Hermione", "invalid");
 
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
         validator.validate(rsvp, errors);
@@ -51,6 +45,13 @@ public class RsvpValidatorTest {
 
         rsvp.setResponse("no");
         assertValid(rsvp, validator);
+    }
+
+    private Rsvp makeRsvp(String name, String response) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setName(name);
+        rsvp.setResponse(response);
+        return rsvp;
     }
 
     private void assertValid(Object object, Validator validator) {
