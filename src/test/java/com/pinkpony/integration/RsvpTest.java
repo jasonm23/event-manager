@@ -115,7 +115,7 @@ public class RsvpTest {
     }
 
     @Test
-    public void rsvpWithNoFields() throws JsonProcessingException, ParseException {
+    public void rsvpWithNoFields() throws Exception {
         JSONObject json = new JSONObject();
         json.put("name", "");
         json.put("response", "");
