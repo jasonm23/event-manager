@@ -175,13 +175,15 @@ public class CalendarEventCrudTest {
         then().
                 statusCode(400).
                 body("errors", hasSize(2)).
+
                 body("errors[0].entity", equalTo("CalendarEvent")).
                 body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.name.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[0].property", equalTo("name")).
                 body("errors[0].invalidValue", equalTo("null")).
+
                 body("errors[1].entity", equalTo("CalendarEvent")).
                 body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
-                body("errors[1].invalidValue", equalTo(""));
+                body("errors[1].invalidValue", equalTo("null"));
     }
 }

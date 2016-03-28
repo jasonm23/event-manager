@@ -84,7 +84,7 @@ public class RsvpTest {
                 post("/rsvps").
                 then().
                 statusCode(201).
-                body("_links.event.href", containsString("/event")).
+                body("_links.calendarEvent.href", containsString("/calendarEvent")).
                 body("name", equalTo("Gabe")).
                 body("response", equalTo("yes"));
     }
