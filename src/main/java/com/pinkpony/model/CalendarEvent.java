@@ -1,12 +1,10 @@
 package com.pinkpony.model;
 
 import javax.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,7 +35,7 @@ public class CalendarEvent implements Serializable {
 
     @JsonProperty("calendarEventDateTime")
     private String calendarEventDateTimeString;
-    private String organizer;
+    private String username;
     private String venue;
 
     private Boolean cancelled = false;
@@ -88,12 +86,12 @@ public class CalendarEvent implements Serializable {
         this.calendarEventDateTime = calendarEventDateTime;
     }
 
-    public String getOrganizer() {
-        return organizer;
+    public String getUsername() {
+        return username;
     }
 
-    public void setOrganizer(String organizer) {
-        this.organizer = organizer;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getId() {

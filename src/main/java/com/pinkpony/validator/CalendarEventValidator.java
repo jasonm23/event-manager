@@ -25,7 +25,7 @@ public class CalendarEventValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "calendarEvent.description.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "calendarEventDateTimeString", "calendarEvent.calendarEventDateTime.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "venue", "calendarEvent.venue.field.empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "organizer", "calendarEvent.organizer.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "calendarEvent.username.field.empty");
 
         CalendarEvent calendarEvent = (CalendarEvent)obj;
         if (!errors.hasFieldErrors("calendarEventDateTimeString")) {

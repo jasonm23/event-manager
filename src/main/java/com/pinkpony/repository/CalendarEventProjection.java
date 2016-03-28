@@ -14,7 +14,7 @@ import java.util.List;
 public interface CalendarEventProjection {
     String getName();
     String getDescription();
-    String getOrganizer();
+    String getUsername();
     String getVenue();
 
     List<Rsvp> getRsvps();

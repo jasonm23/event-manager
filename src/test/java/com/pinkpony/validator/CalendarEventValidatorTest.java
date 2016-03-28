@@ -80,17 +80,17 @@ public class CalendarEventValidatorTest {
     }
 
     @Test
-    public void rejectsEmptyOrganizer() {
+    public void rejectsEmptyUsername() {
         CalendarEvent event = makeEvent();
-        event.setOrganizer("");
-        assertInvalid(event, validator, "organizer", "calendarEvent.organizer.field.empty");
+        event.setUsername("");
+        assertInvalid(event, validator, "username", "calendarEvent.username.field.empty");
     }
 
     @Test
-    public void rejectsNullOrganizer() {
+    public void rejectsNullUsername() {
         CalendarEvent event = makeEvent();
-        event.setOrganizer(null);
-        assertInvalid(event, validator, "organizer", "calendarEvent.organizer.field.empty");
+        event.setUsername(null);
+        assertInvalid(event, validator, "username", "calendarEvent.username.field.empty");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class CalendarEventValidatorTest {
         newEvent.setDescription("Wanna learn how to boot?");
         newEvent.setVenue("Arrowhead Lounge");
         newEvent.setCalendarEventDateTimeString("2016-03-18T14:33:00+0000");
-        newEvent.setOrganizer("Holly");
+        newEvent.setUsername("Holly");
 
         return newEvent;
     }

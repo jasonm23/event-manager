@@ -1,6 +1,5 @@
 package com.pinkpony.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
@@ -25,7 +24,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -62,7 +60,7 @@ public class RsvpTest {
         calendarEvent.setDescription("A Big Night of CalendarEventness");
         calendarEvent.setVenue("That amazing place");
         calendarEvent.setCalendarEventDateTime(calendarEventDate);
-        calendarEvent.setOrganizer("Joe");
+        calendarEvent.setUsername("Joe");
         calendarEventRepository.save(calendarEvent);
 
         eventUri = String.format("http://localhost:%s/calendarEvents/%s", port, calendarEvent.getId());
@@ -73,7 +71,7 @@ public class RsvpTest {
         String eventUri = String.format("http://localhost:%s/events/%s", port, calendarEvent.getId());
 
         JSONObject params = new JSONObject();
-        params.put("name", "Gabe");
+        params.put("username", "Gabe");
         params.put("response", "yes");
         params.put("event", eventUri);
 
@@ -85,7 +83,7 @@ public class RsvpTest {
                 then().
                 statusCode(201).
                 body("_links.calendarEvent.href", containsString("/calendarEvent")).
-                body("name", equalTo("Gabe")).
+                body("username", equalTo("Gabe")).
                 body("response", equalTo("yes"));
     }
 
@@ -95,29 +93,19 @@ public class RsvpTest {
 
         given().
                 contentType(ContentType.JSON).
-                request().body("{\"name\":\"Bobby\", \"response\":\"no\"}").
+                request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
                 when().
                 patch(String.format("/rsvps/%s", testRsvp.getId())).
                 then().
                 statusCode(200).
                 body("response", equalTo("no")).
-                body("name", equalTo("Bobby"));
-    }
-
-    private Rsvp createTestRsvp(String name, String response) {
-        Rsvp rsvp = new Rsvp();
-        rsvp.setName(name);
-        rsvp.setResponse(response);
-        rsvp.calendarEvent = calendarEvent;
-
-        rsvpRepository.save(rsvp);
-        return rsvp;
+                body("username", equalTo("Bobby"));
     }
 
     @Test
     public void rsvpWithNoFields() throws Exception {
         JSONObject json = new JSONObject();
-        json.put("name", "");
+        json.put("username", "");
         json.put("response", "");
         //TODO: should we just test invalid post here? not all missing fields since this is duplicating the rsvpval unit tsts?
 
@@ -130,13 +118,22 @@ public class RsvpTest {
                 statusCode(400).
                 body("errors", hasSize(3)).
                 body("errors[0].entity", equalTo("Rsvp")).
-                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.name.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("name")).
+                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.username.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("username")).
                 body("errors[0].invalidValue", equalTo("")).
                 body("errors[1].message", equalTo(messageSource.getMessage("rsvp.response.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("response")).
                 body("errors[1].invalidValue", equalTo(""));
 
         //TODO: add more assertions about the shape and content of error messages in response
+    }
+
+    private Rsvp createTestRsvp(String name, String response) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setUsername(name);
+        rsvp.setResponse(response);
+        rsvp.calendarEvent = calendarEvent;
+        rsvpRepository.save(rsvp);
+        return rsvp;
     }
 }

@@ -1,6 +1,5 @@
 package com.pinkpony.model;
 
-import javax.annotation.Generated;
 import javax.persistence.*;
 
 @Entity
@@ -11,15 +10,15 @@ public class Rsvp {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
-    String name;
+    String username;
     String response;
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getResponse() {

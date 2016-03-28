@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EventServiceTest {
+public class CalendarEventServiceTest {
 
     @Mock
     CalendarEventRepository eventRepository;
@@ -34,11 +34,11 @@ public class EventServiceTest {
     @Before
     public void setup() {
         event = new CalendarEvent();
-        event.setOrganizer("Frankel");
+        event.setUsername("Frankel");
         event.setCancelled(false);
 
         eventData = new HashMap<>();
-        eventData.put("organizer", "Frankel");
+        eventData.put("username", "Frankel");
         eventData.put("cancelled", "true");
 
         when(eventRepository.findOne(event.getId())).thenReturn(event);
@@ -57,7 +57,7 @@ public class EventServiceTest {
 
     @Test
     public void testCancelEventWithWrongOrganizer() {
-        eventData.put("organizer", "Lynwood");
+        eventData.put("username", "Lynwood");
 
         ResponseEntity response = eventService.update(event.getId(), eventData);
 
