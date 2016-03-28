@@ -163,7 +163,7 @@ public class CalendarEventCrudTest {
     public void badRequestOnErrors() throws Exception {
         JSONObject params = new JSONObject();
         params.put("description", "A Big Night of Eventness");
-        params.put("eventDateTime", "");
+        params.put("calendarEventDateTime", "not a date");
         params.put("organizer", "Joe");
         params.put("venue", "Arrowhead Lounge");
 
@@ -182,8 +182,8 @@ public class CalendarEventCrudTest {
                 body("errors[0].invalidValue", equalTo("null")).
 
                 body("errors[1].entity", equalTo("CalendarEvent")).
-                body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
-                body("errors[1].invalidValue", equalTo("null"));
+                body("errors[1].invalidValue", equalTo("not a date"));
     }
 }

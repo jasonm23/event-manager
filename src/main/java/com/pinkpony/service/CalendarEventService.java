@@ -3,7 +3,6 @@ package com.pinkpony.service;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +14,10 @@ import java.util.Map;
 public class CalendarEventService {
 
     @Autowired
-    CalendarEventRepository eventRepository;
+    CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<?> handleCalendarEventPUT(Long eventId, Map<String, String> eventMap) {
-        CalendarEvent originalCalendarEvent = eventRepository.findOne(eventId);
+    public ResponseEntity<?> update(Long eventId, Map<String, String> eventMap) {
+        CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
         Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
 
         if (! originalCalendarEvent.getOrganizer().equals(eventMap.get("organizer"))) {
@@ -31,7 +30,7 @@ public class CalendarEventService {
         }
 
         originalCalendarEvent.setCancelled(Boolean.parseBoolean(eventMap.get("cancelled")));
-        eventRepository.save(originalCalendarEvent);
+        calendarEventRepository.save(originalCalendarEvent);
         return ResponseEntity.ok(resource);
     }
 
