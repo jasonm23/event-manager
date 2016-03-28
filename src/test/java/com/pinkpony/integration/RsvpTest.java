@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
-import com.pinkpony.model.Event;
+import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
-import com.pinkpony.repository.EventRepository;
+import com.pinkpony.repository.CalendarEventRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,32 +37,32 @@ import static org.hamcrest.Matchers.hasSize;
 public class RsvpTest {
     public String eventUri;
     @Autowired
-    EventRepository eventRepository;
+    CalendarEventRepository calendarEventRepository;
 
     @Autowired
     MessageSource messageSource;
 
-    Event event;
-    private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
+    CalendarEvent calendarEvent;
+    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     String eventDateString = "2016-04-18T14:33:00+0000";
-    Date eventDate;
+    Date calendarEventDate;
     @Value("${local.server.port}")
     int port;
 
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
-        eventDate = dateFormat.parse(eventDateString);
+        calendarEventDate = dateFormat.parse(eventDateString);
 
-        event = new Event();
-        event.setName("BG Night");
-        event.setDescription("A Big Night of Eventness");
-        event.setVenue("That amazing place");
-        event.setEventDateTime(eventDate);
-        event.setOrganizer("Joe");
-        eventRepository.save(event);
+        calendarEvent = new CalendarEvent();
+        calendarEvent.setName("BG Night");
+        calendarEvent.setDescription("A Big Night of CalendarEventness");
+        calendarEvent.setVenue("That amazing place");
+        calendarEvent.setCalendarEventDateTime(calendarEventDate);
+        calendarEvent.setOrganizer("Joe");
+        calendarEventRepository.save(calendarEvent);
 
-        eventUri = String.format("http://localhost:%s/events/%s", port, event.getId());
+        eventUri = String.format("http://localhost:%s/calendarEvents/%s", port, calendarEvent.getId());
     }
 
     @Test

@@ -19,12 +19,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Event implements Serializable {
+public class CalendarEvent implements Serializable {
 
     public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -33,18 +33,18 @@ public class Event implements Serializable {
     private String description;
 
     @JsonIgnore
-    private Date eventDateTime;
+    private Date calendarEventDateTime;
 
-    @JsonProperty("eventDateTime")
-    private String eventDateTimeString;
+    @JsonProperty("calendarEventDateTime")
+    private String calendarEventDateTimeString;
     private String organizer;
     private String venue;
 
     private Boolean cancelled = false;
 
-    public Event(){}
+    public CalendarEvent(){}
 
-    public Event(String name){
+    public CalendarEvent(String name){
         this.name = name;
     }
 
@@ -56,12 +56,12 @@ public class Event implements Serializable {
         this.cancelled = cancelled;
     }
 
-    public String getEventDateTimeString() {
-        return eventDateTimeString;
+    public String getCalendarEventDateTimeString() {
+        return calendarEventDateTimeString;
     }
 
-    public void setEventDateTimeString(String eventDateTimeString) {
-        this.eventDateTimeString = eventDateTimeString;
+    public void setCalendarEventDateTimeString(String calendarEventDateTimeString) {
+        this.calendarEventDateTimeString = calendarEventDateTimeString;
     }
 
     public String getVenue() {
@@ -80,12 +80,12 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Date getEventDateTime() {
-        return eventDateTime;
+    public Date getCalendarEventDateTime() {
+        return calendarEventDateTime;
     }
 
-    public void setEventDateTime(Date eventDateTime) {
-        this.eventDateTime = eventDateTime;
+    public void setCalendarEventDateTime(Date calendarEventDateTime) {
+        this.calendarEventDateTime = calendarEventDateTime;
     }
 
     public String getOrganizer() {

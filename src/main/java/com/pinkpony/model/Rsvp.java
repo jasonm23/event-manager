@@ -6,8 +6,8 @@ import javax.persistence.*;
 @Entity
 public class Rsvp {
     @ManyToOne
-    @JoinColumn(name = "event_id")
-    public Event event;
+    @JoinColumn(name = "calendar_event_id")
+    public CalendarEvent calendarEvent;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;

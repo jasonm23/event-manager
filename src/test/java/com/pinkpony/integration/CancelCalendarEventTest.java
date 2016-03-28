@@ -3,8 +3,8 @@ package com.pinkpony.integration;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
-import com.pinkpony.model.Event;
-import com.pinkpony.repository.EventRepository;
+import com.pinkpony.model.CalendarEvent;
+import com.pinkpony.repository.CalendarEventRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,16 +28,16 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
-public class CancelEventTest {
+public class CancelCalendarEventTest {
 
 
     @Autowired
-    EventRepository eventRepository;
+    CalendarEventRepository calendarEventRepository;
 
-    private final static DateFormat dateFormat = new SimpleDateFormat(Event.FORMAT_STRING);
-    String eventDateString = "2016-03-18T14:33:00+0000";
-    Event existingEvent;
-    Date eventDate;
+    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+    String calendarEventDateString = "2016-03-18T14:33:00+0000";
+    CalendarEvent existingCalendarEvent;
+    Date calendarEventDate;
 
     @Value("${local.server.port}")
     int port;
@@ -45,26 +45,26 @@ public class CancelEventTest {
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
-        eventDate = dateFormat.parse(eventDateString);
-        existingEvent = new Event();
-        existingEvent.setName("BG Night");
-        existingEvent.setDescription("A Big Night of Eventness");
-        existingEvent.setVenue("That amazing place");
-        existingEvent.setEventDateTime(eventDate);
-        existingEvent.setCancelled(false);
-        existingEvent.setOrganizer("Joe");
-        eventRepository.save(existingEvent);
+        calendarEventDate = dateFormat.parse(calendarEventDateString);
+        existingCalendarEvent = new CalendarEvent();
+        existingCalendarEvent.setName("BG Night");
+        existingCalendarEvent.setDescription("A Big Night of CalendarEventness");
+        existingCalendarEvent.setVenue("That amazing place");
+        existingCalendarEvent.setCalendarEventDateTime(calendarEventDate);
+        existingCalendarEvent.setCancelled(false);
+        existingCalendarEvent.setOrganizer("Joe");
+        calendarEventRepository.save(existingCalendarEvent);
     }
 
     @After
     public void tearDown() {
-        eventRepository.deleteAll();
+        calendarEventRepository.deleteAll();
     }
 
     @Test
-    public void cancelEvent(){
+    public void cancelCalendarEvent(){
 
-        String cancelUri = String.format("http://localhost:%d/events/%d", port, existingEvent.getId());
+        String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
         String jsonInput = "{\"organizer\":\"Joe\", \"cancelled\":\"true\"}";
 
         given().
@@ -79,10 +79,10 @@ public class CancelEventTest {
     }
 
     @Test
-    public void cancelEventWithWrongOrganiser(){
+    public void cancelCalendarEventWithWrongOrganiser(){
 
-        String cancelUri = String.format("http://localhost:%d/events/%d", port, existingEvent.getId());
-        String jsonInput = "{\"organizer\":\"NotTheEventOrganizer\", \"cancelled\":\"true\"}";
+        String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
+        String jsonInput = "{\"organizer\":\"NotTheCalendarEventOrganizer\", \"cancelled\":\"true\"}";
 
         given().
                 contentType(ContentType.JSON).
@@ -96,9 +96,9 @@ public class CancelEventTest {
     }
 
     @Test
-    public void cancelEventWithNonBoolean(){
+    public void cancelCalendarEventWithNonBoolean(){
 
-        String cancelUri = String.format("http://localhost:%d/events/%d", port, existingEvent.getId());
+        String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
         String jsonInput = "{\"organizer\":\"Joe\", \"cancelled\":\"booptieboo\"}";
 
         given().
