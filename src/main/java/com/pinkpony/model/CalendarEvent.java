@@ -35,7 +35,7 @@ public class CalendarEvent implements Serializable {
 
     @JsonProperty("calendarEventDateTime")
     private String calendarEventDateTimeString;
-    private String organizer;
+    private String username;
     private String venue;
 
     private Boolean cancelled = false;
@@ -86,12 +86,12 @@ public class CalendarEvent implements Serializable {
         this.calendarEventDateTime = calendarEventDateTime;
     }
 
-    public String getOrganizer() {
-        return organizer;
+    public String getUsername() {
+        return username;
     }
 
-    public void setOrganizer(String organizer) {
-        this.organizer = organizer;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getId() {

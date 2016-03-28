@@ -52,7 +52,7 @@ public class CancelCalendarEventTest {
         existingCalendarEvent.setVenue("That amazing place");
         existingCalendarEvent.setCalendarEventDateTime(calendarEventDate);
         existingCalendarEvent.setCancelled(false);
-        existingCalendarEvent.setOrganizer("Joe");
+        existingCalendarEvent.setUsername("Joe");
         calendarEventRepository.save(existingCalendarEvent);
     }
 
@@ -65,7 +65,7 @@ public class CancelCalendarEventTest {
     public void cancelCalendarEvent(){
 
         String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
-        String jsonInput = "{\"organizer\":\"Joe\", \"cancelled\":\"true\"}";
+        String jsonInput = "{\"username\":\"Joe\", \"cancelled\":\"true\"}";
 
         given().
                 contentType(ContentType.JSON).
@@ -82,7 +82,7 @@ public class CancelCalendarEventTest {
     public void cancelCalendarEventWithWrongOrganiser(){
 
         String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
-        String jsonInput = "{\"organizer\":\"NotTheCalendarEventOrganizer\", \"cancelled\":\"true\"}";
+        String jsonInput = "{\"username\":\"NotTheCalendarEventOrganizer\", \"cancelled\":\"true\"}";
 
         given().
                 contentType(ContentType.JSON).
@@ -99,7 +99,7 @@ public class CancelCalendarEventTest {
     public void cancelCalendarEventWithNonBoolean(){
 
         String cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
-        String jsonInput = "{\"organizer\":\"Joe\", \"cancelled\":\"booptieboo\"}";
+        String jsonInput = "{\"username\":\"Joe\", \"cancelled\":\"booptieboo\"}";
 
         given().
                 contentType(ContentType.JSON).

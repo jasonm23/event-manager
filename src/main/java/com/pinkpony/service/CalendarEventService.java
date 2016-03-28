@@ -20,7 +20,7 @@ public class CalendarEventService {
         CalendarEvent originalCalendarEvent = eventRepository.findOne(eventId);
         Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
 
-        if (! originalCalendarEvent.getOrganizer().equals(eventMap.get("organizer"))) {
+        if (! originalCalendarEvent.getUsername().equals(eventMap.get("username"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource);
         }
 

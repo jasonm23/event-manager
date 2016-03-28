@@ -57,7 +57,7 @@ public class RsvpTest {
         calendarEvent.setDescription("A Big Night of CalendarEventness");
         calendarEvent.setVenue("That amazing place");
         calendarEvent.setCalendarEventDateTime(calendarEventDate);
-        calendarEvent.setOrganizer("Joe");
+        calendarEvent.setUsername("Joe");
         calendarEventRepository.save(calendarEvent);
 
         eventUri = String.format("http://localhost:%s/calendarEvents/%s", port, calendarEvent.getId());
@@ -66,7 +66,7 @@ public class RsvpTest {
     @Test
     public void rsvpWithNoFields() throws JsonProcessingException, ParseException {
         JSONObject json = new JSONObject();
-        json.put("name", "");
+        json.put("username", "");
         json.put("response", "");
         //TODO: should we just test invalid post here? not all missing fields since this is duplicating the rsvpval unit tsts?
 
@@ -79,8 +79,8 @@ public class RsvpTest {
                 statusCode(400).
                 body("errors", hasSize(3)).
                 body("errors[0].entity", equalTo("Rsvp")).
-                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.name.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("name")).
+                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.username.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("username")).
                 body("errors[0].invalidValue", equalTo("")).
                 body("errors[1].message", equalTo(messageSource.getMessage("rsvp.response.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("response")).

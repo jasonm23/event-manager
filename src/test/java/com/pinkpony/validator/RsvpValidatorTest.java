@@ -25,7 +25,7 @@ public class RsvpValidatorTest {
         validator.validate(rsvp, errors);
 
         assertTrue(errors.getErrorCount() > 0);
-        assertThat(errors.getFieldError("name").getCodes(), hasItemInArray("rsvp.name.field.empty"));
+        assertThat(errors.getFieldError("username").getCodes(), hasItemInArray("rsvp.username.field.empty"));
         assertThat(errors.getFieldError("response").getCodes(), hasItemInArray("rsvp.response.field.empty"));
     }
 
@@ -37,7 +37,7 @@ public class RsvpValidatorTest {
         validator.validate(rsvp, errors);
 
         assertTrue(errors.getErrorCount() > 0);
-        assertNull(errors.getFieldError("name"));
+        assertNull(errors.getFieldError("username"));
         assertThat(errors.getFieldError("response").getCodes(), hasItemInArray("rsvp.response.field.invalidValue"));
 
         rsvp.setResponse("yes");
@@ -47,9 +47,9 @@ public class RsvpValidatorTest {
         assertValid(rsvp, validator);
     }
 
-    private Rsvp makeRsvp(String name, String response) {
+    private Rsvp makeRsvp(String username, String response) {
         Rsvp rsvp = new Rsvp();
-        rsvp.setName(name);
+        rsvp.setUsername(username);
         rsvp.setResponse(response);
         return rsvp;
     }

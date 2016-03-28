@@ -76,7 +76,7 @@ public class CalendarEventCrudTest {
         newCalendarEvent.setDescription("Wanna learn how to boot?");
         newCalendarEvent.setVenue("Arrowhead Lounge");
         newCalendarEvent.setCalendarEventDateTime(date);
-        newCalendarEvent.setOrganizer("Holly");
+        newCalendarEvent.setUsername("Holly");
 
         return newCalendarEvent;
     }
@@ -88,7 +88,7 @@ public class CalendarEventCrudTest {
         json.put("name", "Spring Boot Night");
         json.put("calendarEventDateTime", calendarEventDateString);
         json.put("description", "A Big Night of CalendarEventness");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "Arrowhead Lounge");
 
         given().
@@ -102,14 +102,14 @@ public class CalendarEventCrudTest {
             body("description", equalTo("A Big Night of CalendarEventness")).
             body("venue", equalTo("Arrowhead Lounge")).
             body("calendarEventDateTime", equalTo(calendarEventDateString)).
-            body("organizer", equalTo("Joe"));
+            body("username", equalTo("Joe"));
     }
 
     @Test
     public void createRsvp() throws JsonProcessingException, ParseException {
         String calendarEventUri = String.format("http://localhost:%s/calendarEvents/%s", port, existingCalendarEvent.getId());
         JSONObject json = new JSONObject();
-        json.put("name", "Gabe");
+        json.put("username", "Gabe");
         json.put("response", "yes");
         json.put("event", calendarEventUri);
 
@@ -121,7 +121,7 @@ public class CalendarEventCrudTest {
         then().
             statusCode(201).
             body("_links.calendarEvent.href", containsString("/calendarEvent")).
-            body("name", equalTo("Gabe")).
+            body("username", equalTo("Gabe")).
             body("response", equalTo("yes"));
     }
 
@@ -141,17 +141,17 @@ public class CalendarEventCrudTest {
             get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
         then().
             statusCode(200).
-            body("_embedded.rsvps[0].name", containsString("Billy")).
+            body("_embedded.rsvps[0].username", containsString("Billy")).
             body("_embedded.rsvps[0].response", containsString("yes")).
-            body("_embedded.rsvps[1].name", containsString("Sarah")).
+            body("_embedded.rsvps[1].username", containsString("Sarah")).
             body("_embedded.rsvps[1].response", containsString("yes")).
-            body("_embedded.rsvps[2].name", containsString("Jo")).
+            body("_embedded.rsvps[2].username", containsString("Jo")).
             body("_embedded.rsvps[2].response", containsString("no")).
-            body("_embedded.rsvps[3].name", containsString("Colin")).
+            body("_embedded.rsvps[3].username", containsString("Colin")).
             body("_embedded.rsvps[3].response", containsString("yes")).
-            body("_embedded.rsvps[4].name", containsString("Trudy")).
+            body("_embedded.rsvps[4].username", containsString("Trudy")).
             body("_embedded.rsvps[4].response", containsString("no")).
-            body("_embedded.rsvps[5].name", containsString("Heng")).
+            body("_embedded.rsvps[5].username", containsString("Heng")).
             body("_embedded.rsvps[5].response", containsString("no"));
     }
 
@@ -175,18 +175,18 @@ public class CalendarEventCrudTest {
 
         given().
             contentType(ContentType.JSON).
-            request().body("{\"name\":\"Bobby\", \"response\":\"no\"}").
+            request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
         when().
             patch(String.format("/rsvps/%s", testRsvp.getId())).
         then().
             statusCode(200).
             body("response", equalTo("no")).
-            body("name", equalTo("Bobby"));
+            body("username", equalTo("Bobby"));
     }
 
-    private Rsvp createTestRsvp(String name, String response) {
+    private Rsvp createTestRsvp(String username, String response) {
         Rsvp rsvp = new Rsvp();
-        rsvp.setName(name);
+        rsvp.setUsername(username);
         rsvp.setResponse(response);
         rsvp.calendarEvent = existingCalendarEvent;
 
@@ -200,7 +200,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("calendarEventDateTime", "2016-03-18T14:33:00+0000");
         json.put("description", "A Big Night of CalendarEventness ");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
 
         given().
@@ -222,7 +222,7 @@ public class CalendarEventCrudTest {
         JSONObject json = new JSONObject();
         json.put("name","Bob's bcalendarEig blowout");
         json.put("description","A Big Night of CalendarEventness");
-        json.put("organizer","Joe");
+        json.put("username","Joe");
         json.put("venue","That amazing place");
 
         given().
@@ -245,7 +245,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("name", "name");
         json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
 
         given().
@@ -269,7 +269,7 @@ public class CalendarEventCrudTest {
         json.put("name", "name");
         json.put("description", "A Big Night of CalendarEventness");
         json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
 
         given().
@@ -287,7 +287,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("name", "name");
         json.put("description", "A Big Night of CalendarEventness");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
 
         given().
@@ -310,7 +310,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("name", "name");
         json.put("description", "A Big Night of CalendarEventness");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
         json.put("calendarEventDateTime", "");
 
@@ -334,7 +334,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("name", "name");
         json.put("description", "A Big Night of CalendarEventness");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "That amazing place");
         json.put("calendarEventDateTime", "2015-03-11T11:00:00");
 
@@ -359,7 +359,7 @@ public class CalendarEventCrudTest {
         json.put("name", "Spring Boot Night");
         json.put("calendarEventDateTime", calendarEventDateString);
         json.put("description", "A Big Night of CalendarEventness");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
 
         given().
                 contentType(ContentType.JSON).
@@ -376,7 +376,7 @@ public class CalendarEventCrudTest {
     }
 
     @Test
-    public void badRequestOnMissingOrganizerField() throws Exception {
+    public void badRequestOnMissingUsernameField() throws Exception {
         JSONObject json = new JSONObject();
         json.put("id", "");
         json.put("name", "Spring Boot Night");
@@ -393,8 +393,8 @@ public class CalendarEventCrudTest {
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.organizer.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("organizer")).
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.username.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("username")).
                 body("errors[0].invalidValue", equalTo("null"));
     }
 
@@ -404,7 +404,7 @@ public class CalendarEventCrudTest {
         json.put("id", "");
         json.put("description", "A Big Night of CalendarEventness");
         json.put("calendarEventDateTime", "");
-        json.put("organizer", "Joe");
+        json.put("username", "Joe");
         json.put("venue", "Arrowhead Lounge");
 
         given().
