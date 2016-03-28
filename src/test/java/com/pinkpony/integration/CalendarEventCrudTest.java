@@ -108,26 +108,6 @@ public class CalendarEventCrudTest {
     }
 
     @Test
-    public void createRsvp() throws JsonProcessingException, ParseException {
-        String calendarEventUri = String.format("http://localhost:%s/calendarEvents/%s", port, existingCalendarEvent.getId());
-        JSONObject json = new JSONObject();
-        json.put("name", "Gabe");
-        json.put("response", "yes");
-        json.put("event", calendarEventUri);
-
-        given().
-            contentType(ContentType.JSON).
-            body(json.toString()).
-        when().
-            post("/rsvps").
-        then().
-            statusCode(201).
-            body("_links.calendarEvent.href", containsString("/calendarEvent")).
-            body("name", equalTo("Gabe")).
-            body("response", equalTo("yes"));
-    }
-
-    @Test
     public void eventsListWithRSVPs() {
         // When an event has RSVPs...
         createTestRsvp("Billy", "yes");
@@ -170,21 +150,6 @@ public class CalendarEventCrudTest {
 //            statusCode(200).
 //            body("name", equalTo("Mah CalendarEvent Name is Changed"));
 //    }
-
-    @Test
-    public void editRsvp() {
-        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
-
-        given().
-            contentType(ContentType.JSON).
-            request().body("{\"name\":\"Bobby\", \"response\":\"no\"}").
-        when().
-            patch(String.format("/rsvps/%s", testRsvp.getId())).
-        then().
-            statusCode(200).
-            body("response", equalTo("no")).
-            body("name", equalTo("Bobby"));
-    }
 
     private Rsvp createTestRsvp(String name, String response) {
         Rsvp rsvp = new Rsvp();

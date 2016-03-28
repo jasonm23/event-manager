@@ -7,7 +7,8 @@ import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
-import org.json.simple.JSONObject;
+import com.pinkpony.repository.RsvpRepository;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -38,6 +38,9 @@ public class RsvpTest {
     public String eventUri;
     @Autowired
     CalendarEventRepository calendarEventRepository;
+
+    @Autowired
+    RsvpRepository rsvpRepository;
 
     @Autowired
     MessageSource messageSource;
@@ -63,6 +66,52 @@ public class RsvpTest {
         calendarEventRepository.save(calendarEvent);
 
         eventUri = String.format("http://localhost:%s/calendarEvents/%s", port, calendarEvent.getId());
+    }
+
+    @Test
+    public void createRsvp() throws Exception {
+        String eventUri = String.format("http://localhost:%s/events/%s", port, calendarEvent.getId());
+
+        JSONObject params = new JSONObject();
+        params.put("name", "Gabe");
+        params.put("response", "yes");
+        params.put("event", eventUri);
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+                when().
+                post("/rsvps").
+                then().
+                statusCode(201).
+                body("_links.event.href", containsString("/event")).
+                body("name", equalTo("Gabe")).
+                body("response", equalTo("yes"));
+    }
+
+    @Test
+    public void editRsvp() {
+        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
+
+        given().
+                contentType(ContentType.JSON).
+                request().body("{\"name\":\"Bobby\", \"response\":\"no\"}").
+                when().
+                patch(String.format("/rsvps/%s", testRsvp.getId())).
+                then().
+                statusCode(200).
+                body("response", equalTo("no")).
+                body("name", equalTo("Bobby"));
+    }
+
+    private Rsvp createTestRsvp(String name, String response) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setName(name);
+        rsvp.setResponse(response);
+        rsvp.calendarEvent = calendarEvent;
+
+        rsvpRepository.save(rsvp);
+        return rsvp;
     }
 
     @Test
