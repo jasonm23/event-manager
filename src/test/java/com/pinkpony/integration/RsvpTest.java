@@ -52,9 +52,9 @@ public class RsvpTest extends PinkPonyIntegrationBase {
         given().
                 contentType(ContentType.JSON).
                 body(params.toString()).
-                when().
+        when().
                 post("/rsvps").
-                then().
+        then().
                 statusCode(201).
                 body("_links.calendarEvent.href", containsString("/calendarEvent")).
                 body("username", equalTo("Gabe")).
