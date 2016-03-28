@@ -1,6 +1,5 @@
 package com.pinkpony.model;
 
-import javax.annotation.Generated;
 import javax.persistence.*;
 
 @Entity

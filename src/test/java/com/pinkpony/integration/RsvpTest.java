@@ -5,7 +5,6 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
-import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
 import org.json.simple.JSONObject;
 import org.junit.Before;
@@ -24,7 +23,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;

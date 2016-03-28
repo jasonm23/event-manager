@@ -3,7 +3,6 @@ package com.pinkpony.service;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
