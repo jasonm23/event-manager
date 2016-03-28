@@ -134,7 +134,7 @@ public class CalendarEventCrudTest {
             contentType(ContentType.JSON).
         when().
             get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
-        then().
+        then().log().all().
             statusCode(200).
             body("_embedded.rsvps[0].username", containsString("Billy")).
             body("_embedded.rsvps[0].response", containsString("yes")).
