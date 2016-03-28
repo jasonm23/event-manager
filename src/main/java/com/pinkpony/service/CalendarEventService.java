@@ -1,8 +1,7 @@
 package com.pinkpony.service;
 
-
-import com.pinkpony.model.Event;
-import com.pinkpony.repository.EventRepository;
+import com.pinkpony.model.CalendarEvent;
+import com.pinkpony.repository.CalendarEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.hateoas.Resource;
@@ -13,16 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class EventService {
+public class CalendarEventService {
 
     @Autowired
-    EventRepository eventRepository;
+    CalendarEventRepository eventRepository;
 
-    public ResponseEntity<?> handleEventPUT(Long eventId, Map<String, String> eventMap) {
-        Event originalEvent = eventRepository.findOne(eventId);
-        Resource<Event> resource = new Resource<Event>(originalEvent);
+    public ResponseEntity<?> handleCalendarEventPUT(Long eventId, Map<String, String> eventMap) {
+        CalendarEvent originalCalendarEvent = eventRepository.findOne(eventId);
+        Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
 
-        if (! originalEvent.getOrganizer().equals(eventMap.get("organizer"))) {
+        if (! originalCalendarEvent.getOrganizer().equals(eventMap.get("organizer"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource);
         }
 
@@ -31,8 +30,8 @@ public class EventService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resource);
         }
 
-        originalEvent.setCancelled(Boolean.parseBoolean(eventMap.get("cancelled")));
-        eventRepository.save(originalEvent);
+        originalCalendarEvent.setCancelled(Boolean.parseBoolean(eventMap.get("cancelled")));
+        eventRepository.save(originalCalendarEvent);
         return ResponseEntity.ok(resource);
     }
 

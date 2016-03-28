@@ -1,6 +1,6 @@
 package com.pinkpony.repository;
 
-import com.pinkpony.model.Event;
+import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import org.springframework.data.rest.core.config.Projection;
 

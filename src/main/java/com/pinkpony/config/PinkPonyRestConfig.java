@@ -1,6 +1,6 @@
 package com.pinkpony.config;
 
-import com.pinkpony.validator.EventValidator;
+import com.pinkpony.validator.CalendarEventValidator;
 import com.pinkpony.validator.RsvpValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapt
 public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
 
     @Autowired
-    EventValidator eventValidator;
+    CalendarEventValidator calendarEventValidator;
 
     @Autowired
     RsvpValidator rsvpValidator;
@@ -24,9 +24,9 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
     }
 
     @Bean
-    public EventValidator eventValidator()
+    public CalendarEventValidator calendarEventValidator()
     {
-        return new EventValidator();
+        return new CalendarEventValidator();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
 
         //Register our validator with the REST data event listener
         validatingListener.addValidator("beforeCreate", rsvpValidator);
-        validatingListener.addValidator("beforeCreate", eventValidator);
+        validatingListener.addValidator("beforeCreate", calendarEventValidator);
     }
 
 
