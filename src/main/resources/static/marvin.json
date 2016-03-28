@@ -30,7 +30,7 @@
         {"calendar_event_id": "/\\d+/"}
       ],
       "endpoint": "/calendarEvents/{calendar_event_id}/cancel",
-      "body": { "cancel": true }
+      "body": { "cancel": true },
       "method": "PATCH"
     }
   ]
