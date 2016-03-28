@@ -39,7 +39,6 @@ public class RsvpValidatorTest {
         assertTrue(errors.getErrorCount() > 0);
         assertNull(errors.getFieldError("username"));
         assertThat(errors.getFieldError("response").getCodes(), hasItemInArray("rsvp.response.field.invalidValue"));
-        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.empty"));
 
         rsvp.setResponse("yes");
         assertValid(rsvp, validator);
