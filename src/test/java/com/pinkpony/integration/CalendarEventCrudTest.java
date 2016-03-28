@@ -1,7 +1,5 @@
 package com.pinkpony.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
@@ -9,7 +7,7 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,8 +52,6 @@ public class CalendarEventCrudTest {
     @Value("${local.server.port}")
     int port;
 
-    static ObjectMapper objectMapper = new ObjectMapper();
-
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
@@ -84,7 +80,6 @@ public class CalendarEventCrudTest {
     @Test
     public void createCalendarEvent() throws Exception {
         JSONObject json = new JSONObject();
-        json.put("id", null);
         json.put("name", "Spring Boot Night");
         json.put("calendarEventDateTime", calendarEventDateString);
         json.put("description", "A Big Night of CalendarEventness");
@@ -106,7 +101,7 @@ public class CalendarEventCrudTest {
     }
 
     @Test
-    public void createRsvp() throws JsonProcessingException, ParseException {
+    public void createRsvp() throws Exception {
         String calendarEventUri = String.format("http://localhost:%s/calendarEvents/%s", port, existingCalendarEvent.getId());
         JSONObject json = new JSONObject();
         json.put("username", "Gabe");
@@ -329,7 +324,7 @@ public class CalendarEventCrudTest {
     }
 
     @Test
-    public void badRequestOnWrongFormattedCalendarEventDateTimeField() throws JsonProcessingException {
+    public void badRequestOnWrongFormattedCalendarEventDateTimeField() throws Exception {
         JSONObject json = new JSONObject();
         json.put("id", "");
         json.put("name", "name");
@@ -412,13 +407,15 @@ public class CalendarEventCrudTest {
                 body(json.toString()).
         when().
                 post("/calendarEvents").
-        then().
+        then().log().all().
                 statusCode(400).
                 body("errors", hasSize(2)).
+
                 body("errors[0].entity", equalTo("CalendarEvent")).
                 body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.name.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[0].property", equalTo("name")).
                 body("errors[0].invalidValue", equalTo("null")).
+
                 body("errors[1].entity", equalTo("CalendarEvent")).
                 body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).

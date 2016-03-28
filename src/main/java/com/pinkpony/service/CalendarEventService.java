@@ -14,10 +14,10 @@ import java.util.Map;
 public class CalendarEventService {
 
     @Autowired
-    CalendarEventRepository eventRepository;
+    CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<?> handleCalendarEventPUT(Long eventId, Map<String, String> eventMap) {
-        CalendarEvent originalCalendarEvent = eventRepository.findOne(eventId);
+    public ResponseEntity<?> update(Long eventId, Map<String, String> eventMap) {
+        CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
         Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
 
         if (! originalCalendarEvent.getUsername().equals(eventMap.get("username"))) {
@@ -30,7 +30,7 @@ public class CalendarEventService {
         }
 
         originalCalendarEvent.setCancelled(Boolean.parseBoolean(eventMap.get("cancelled")));
-        eventRepository.save(originalCalendarEvent);
+        calendarEventRepository.save(originalCalendarEvent);
         return ResponseEntity.ok(resource);
     }
 

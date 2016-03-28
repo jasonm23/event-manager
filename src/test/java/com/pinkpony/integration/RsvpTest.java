@@ -1,12 +1,13 @@
 package com.pinkpony.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
+import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
-import org.json.simple.JSONObject;
+import com.pinkpony.repository.RsvpRepository;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -36,6 +36,9 @@ public class RsvpTest {
     public String eventUri;
     @Autowired
     CalendarEventRepository calendarEventRepository;
+
+    @Autowired
+    RsvpRepository rsvpRepository;
 
     @Autowired
     MessageSource messageSource;
@@ -64,7 +67,43 @@ public class RsvpTest {
     }
 
     @Test
-    public void rsvpWithNoFields() throws JsonProcessingException, ParseException {
+    public void createRsvp() throws Exception {
+        String eventUri = String.format("http://localhost:%s/events/%s", port, calendarEvent.getId());
+
+        JSONObject params = new JSONObject();
+        params.put("username", "Gabe");
+        params.put("response", "yes");
+        params.put("event", eventUri);
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+                when().
+                post("/rsvps").
+                then().
+                statusCode(201).
+                body("_links.calendarEvent.href", containsString("/calendarEvent")).
+                body("username", equalTo("Gabe")).
+                body("response", equalTo("yes"));
+    }
+
+    @Test
+    public void editRsvp() {
+        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
+
+        given().
+                contentType(ContentType.JSON).
+                request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
+                when().
+                patch(String.format("/rsvps/%s", testRsvp.getId())).
+                then().
+                statusCode(200).
+                body("response", equalTo("no")).
+                body("username", equalTo("Bobby"));
+    }
+
+    @Test
+    public void rsvpWithNoFields() throws Exception {
         JSONObject json = new JSONObject();
         json.put("username", "");
         json.put("response", "");
@@ -87,5 +126,14 @@ public class RsvpTest {
                 body("errors[1].invalidValue", equalTo(""));
 
         //TODO: add more assertions about the shape and content of error messages in response
+    }
+
+    private Rsvp createTestRsvp(String name, String response) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setUsername(name);
+        rsvp.setResponse(response);
+        rsvp.calendarEvent = calendarEvent;
+        rsvpRepository.save(rsvp);
+        return rsvp;
     }
 }
