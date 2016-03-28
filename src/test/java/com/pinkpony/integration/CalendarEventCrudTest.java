@@ -9,6 +9,7 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
+import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,17 +85,17 @@ public class CalendarEventCrudTest {
 
     @Test
     public void createCalendarEvent() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "Spring Boot Night");
-        params.put("calendarEventDateTime", calendarEventDateString);
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("organizer", "Joe");
-        params.put("venue", "Arrowhead Lounge");
+        JSONObject json = new JSONObject();
+        json.put("id", null);
+        json.put("name", "Spring Boot Night");
+        json.put("calendarEventDateTime", calendarEventDateString);
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("organizer", "Joe");
+        json.put("venue", "Arrowhead Lounge");
 
         given().
             contentType(ContentType.JSON).
-            body(objectMapper.writeValueAsString(params)).
+            body(json.toString()).
         when().log().all().
             post("/calendarEvents").
         then().
@@ -109,15 +110,14 @@ public class CalendarEventCrudTest {
     @Test
     public void createRsvp() throws JsonProcessingException, ParseException {
         String calendarEventUri = String.format("http://localhost:%s/calendarEvents/%s", port, existingCalendarEvent.getId());
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("name", "Gabe");
-        params.put("response", "yes");
-        params.put("event", calendarEventUri);
+        JSONObject json = new JSONObject();
+        json.put("name", "Gabe");
+        json.put("response", "yes");
+        json.put("event", calendarEventUri);
 
         given().
             contentType(ContentType.JSON).
-            body(objectMapper.writeValueAsString(params)).
+            body(json.toString()).
         when().
             post("/rsvps").
         then().
@@ -198,11 +198,16 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnMissingNameField() throws Exception {
-        String jsonInput = "{\"id\":null,\"calendarEventDateTime\":\"2016-03-18T14:33:00+0000\",\"description\":\"A Big Night of CalendarEventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("calendarEventDateTime", "2016-03-18T14:33:00+0000");
+        json.put("description", "A Big Night of CalendarEventness ");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
 
         given().
             contentType(ContentType.JSON).
-            body(jsonInput).
+            body(json.toString()).
         when().
             post("/calendarEvents").
         then().
@@ -216,11 +221,15 @@ public class CalendarEventCrudTest {
 
     @Test
     public void missingCalendarEventTimeOnlyReturnsOneError() throws Exception {
-        String jsonInput = "{\"name\":\"Bob's big blowout\",\"description\":\"A Big Night of CalendarEventness\",\"organizer\":\"Joe\",\"venue\":\"That amazing place\"}";
+        JSONObject json = new JSONObject();
+        json.put("name","Bob's bcalendarEig blowout");
+        json.put("description","A Big Night of CalendarEventness");
+        json.put("organizer","Joe");
+        json.put("venue","That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(jsonInput).
+                body(json.toString()).
         when().
                 post("/calendarEvents").
         then().
@@ -234,19 +243,19 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnMissingDescriptionField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "name");
-        params.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        params.put("organizer", "Joe");
-        params.put("venue", "That amazing place");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "name");
+        json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -257,38 +266,38 @@ public class CalendarEventCrudTest {
 
     @Test
     public void okRequestOnValidCalendarEventDateTimeFieldString() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "name");
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        params.put("organizer", "Joe");
-        params.put("venue", "That amazing place");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "name");
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(201);
     }
 
     @Test
     public void badRequestOnMissingCalendarEventDateTimeField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "name");
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("organizer", "Joe");
-        params.put("venue", "That amazing place");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "name");
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -299,20 +308,20 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnBlankCalendarEventDateTimeField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "name");
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("organizer", "Joe");
-        params.put("venue", "That amazing place");
-        params.put("calendarEventDateTime", "");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "name");
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
+        json.put("calendarEventDateTime", "");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -323,20 +332,20 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnWrongFormattedCalendarEventDateTimeField() throws JsonProcessingException {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "name");
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("organizer", "Joe");
-        params.put("venue", "That amazing place");
-        params.put("calendarEventDateTime", "2015-03-11T11:00:00");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "name");
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("organizer", "Joe");
+        json.put("venue", "That amazing place");
+        json.put("calendarEventDateTime", "2015-03-11T11:00:00");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -347,19 +356,19 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnMissingVenueField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "Spring Boot Night");
-        params.put("calendarEventDateTime", calendarEventDateString);
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("organizer", "Joe");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "Spring Boot Night");
+        json.put("calendarEventDateTime", calendarEventDateString);
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("organizer", "Joe");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -370,19 +379,19 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnMissingOrganizerField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("name", "Spring Boot Night");
-        params.put("calendarEventDateTime", calendarEventDateString);
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("venue", "Arrowhead Lounge");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("name", "Spring Boot Night");
+        json.put("calendarEventDateTime", calendarEventDateString);
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("venue", "Arrowhead Lounge");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(1)).
                 body("errors[0].entity", equalTo("CalendarEvent")).
@@ -393,19 +402,19 @@ public class CalendarEventCrudTest {
 
     @Test
     public void badRequestOnMultipleErrorsForField() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", null);
-        params.put("description", "A Big Night of CalendarEventness");
-        params.put("calendarEventDateTime", "");
-        params.put("organizer", "Joe");
-        params.put("venue", "Arrowhead Lounge");
+        JSONObject json = new JSONObject();
+        json.put("id", "");
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("calendarEventDateTime", "");
+        json.put("organizer", "Joe");
+        json.put("venue", "Arrowhead Lounge");
 
         given().
                 contentType(ContentType.JSON).
-                body(objectMapper.writeValueAsString(params)).
-                when().
+                body(json.toString()).
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(400).
                 body("errors", hasSize(2)).
                 body("errors[0].entity", equalTo("CalendarEvent")).

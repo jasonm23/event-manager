@@ -1,13 +1,13 @@
 package com.pinkpony.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
+import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,16 +67,14 @@ public class RsvpTest {
 
     @Test
     public void rsvpWithNoFields() throws JsonProcessingException, ParseException {
-        ObjectMapper  mapper = new ObjectMapper();
-
-        Rsvp body = new Rsvp();
-        body.setName("");
-        body.setResponse("");
+        JSONObject json = new JSONObject();
+        json.put("name", "");
+        json.put("response", "");
         //TODO: should we just test invalid post here? not all missing fields since this is duplicating the rsvpval unit tsts?
 
         given().
                 contentType(ContentType.JSON).
-                body(mapper.writeValueAsString(body)).
+                body(json.toString()).
             when().
                 post(String.format("/rsvps")).
             then().
@@ -90,6 +88,6 @@ public class RsvpTest {
                 body("errors[1].property", equalTo("response")).
                 body("errors[1].invalidValue", equalTo(""));
 
-        //TODO: add more assertons about the shape and content of error messages in response
+        //TODO: add more assertions about the shape and content of error messages in response
     }
 }
