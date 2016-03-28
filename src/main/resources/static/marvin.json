@@ -5,11 +5,12 @@
     {
       "name": "create",
       "arguments": [
-        {"event_name": "/\\w+/"},
+        {"name": "/\\w+/"},
         {"ignore": "/(on|at)/"},
-        {"start_time": "TIMESTAMP"}
+        {"calendarEventDateTime": "TIMESTAMP"},
+        {"venue": "/\\w+/"}
       ],
-      "endpoint": "/events/",
+      "endpoint": "/calendarEvents/",
       "method": "POST",
       "default_response_success": "Event created successfully",
       "default_response_failure": "EVERYTHING IS HORRIBLE!!!!"
@@ -17,11 +18,11 @@
     {
       "name": "rsvp",
       "arguments": [
-        {"calendar_event_id": "/\\d+/"},
+        {"event": "/https?.*/"},
         {"response": "/(yes|no)/"}
       ],
-      "endpoint": "/events/{calendar_event_id}/rsvp",
-      "method": "PATCH"
+      "endpoint": "/rsvps",
+      "method": "POST"
     },
     {
       "name": "cancel",
