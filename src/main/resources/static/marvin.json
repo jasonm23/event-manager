@@ -18,7 +18,7 @@
     {
       "name": "rsvp",
       "arguments": [
-        {"event": "/https?.*/"},
+        {"calendarEvent": "/https?.*/"},
         {"response": "/(yes|no)/"}
       ],
       "endpoint": "/rsvps",
@@ -29,7 +29,8 @@
       "arguments": [
         {"calendar_event_id": "/\\d+/"}
       ],
-      "endpoint": "/events/{calendar_event_id}/cancel",
+      "endpoint": "/calendarEvents/{calendar_event_id}/cancel",
+      "body": { "cancel": true }
       "method": "PATCH"
     }
   ]
