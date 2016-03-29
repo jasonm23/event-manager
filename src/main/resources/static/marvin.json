@@ -1,0 +1,37 @@
+{
+  "command": "event",
+  "base_url": "http://host/calendarEvents",
+  "subcommands": [
+    {
+      "name": "create",
+      "arguments": [
+        {"name": "/\\w+/"},
+        {"ignore": "/(on|at)/"},
+        {"calendarEventDateTime": "TIMESTAMP"},
+        {"venue": "/\\w+/"}
+      ],
+      "endpoint": "/calendarEvents/",
+      "method": "POST",
+      "default_response_success": "Event created successfully",
+      "default_response_failure": "EVERYTHING IS HORRIBLE!!!!"
+    },
+    {
+      "name": "rsvp",
+      "arguments": [
+        {"calendarEvent": "/https?.*/"},
+        {"response": "/(yes|no)/"}
+      ],
+      "endpoint": "/rsvps",
+      "method": "POST"
+    },
+    {
+      "name": "cancel",
+      "arguments": [
+        {"calendar_event_id": "/\\d+/"}
+      ],
+      "endpoint": "/calendarEvents/{calendar_event_id}/cancel",
+      "body": { "cancel": true }
+      "method": "PATCH"
+    }
+  ]
+}

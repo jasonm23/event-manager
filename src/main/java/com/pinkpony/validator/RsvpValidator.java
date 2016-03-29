@@ -15,6 +15,7 @@ public class RsvpValidator implements Validator {
     public void validate(Object object, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "rsvp.username.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "response", "rsvp.response.field.empty");
+
         Rsvp rsvp = (Rsvp) object;
         if (! (rsvp.getResponse().equals("yes") || rsvp.getResponse().equals("no"))) {
             errors.rejectValue("response", "rsvp.response.field.invalidValue");
