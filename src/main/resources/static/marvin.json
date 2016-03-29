@@ -1,19 +1,20 @@
 {
   "command": "event",
-  "base_url": "http://host/calendarEvents",
+  "base_url": "http://dev-pinkpony.cfapps.io/",
   "subcommands": [
     {
       "name": "create",
       "arguments": [
-        {"name": "/\\w+/"},
+        {"name": "/\\w+\\s*/"},
+        {"description": "/\\w+\\s*/"},
         {"ignore": "/(on|at)/"},
         {"calendarEventDateTime": "TIMESTAMP"},
         {"venue": "/\\w+/"}
       ],
-      "endpoint": "/calendarEvents/",
+      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/",
       "method": "POST",
       "default_response_success": "Event created successfully",
-      "default_response_failure": "EVERYTHING IS HORRIBLE!!!!"
+      "default_response_failure": "Event create failed: EVERYTHING IS HORRIBLE!!!!"
     },
     {
       "name": "rsvp",
@@ -21,17 +22,10 @@
         {"calendarEvent": "/https?.*/"},
         {"response": "/(yes|no)/"}
       ],
-      "endpoint": "/rsvps",
-      "method": "POST"
-    },
-    {
-      "name": "cancel",
-      "arguments": [
-        {"calendar_event_id": "/\\d+/"}
-      ],
-      "endpoint": "/calendarEvents/{calendar_event_id}/cancel",
-      "body": { "cancel": true }
-      "method": "PATCH"
+      "endpoint": "http://dev-pinkpony.cfapps.io/rsvps",
+      "method": "POST",
+      "default_response_success": "You have RSVP`d",
+      "default_response_failure": "RSVP create failed: EVERYTHING IS HORRIBLE!!!!"
     }
   ]
 }
