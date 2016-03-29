@@ -28,7 +28,7 @@ import java.util.Date;
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
-public class PinkPonyIntegrationBase {
+abstract class PinkPonyIntegrationBase {
 
     @Autowired
     public CalendarEventRepository calendarEventRepository;
@@ -80,6 +80,4 @@ public class PinkPonyIntegrationBase {
         return rsvp;
     }
 
-    @Test
-    public void baseTest() {}
 }
