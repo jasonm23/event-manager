@@ -16,20 +16,20 @@ public class CalendarEventService {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> eventMap) {
+    public ResponseEntity<Resource> cancelEvent(Long eventId, Map<String, String> calendarEventMap) {
         CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
 
         if( originalCalendarEvent == null ) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Resource<CalendarEvent>(originalCalendarEvent));
         }
 
         Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
 
-        if (eventMap.get("username") == null){
+        if (calendarEventMap.get("username") == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resource);
         }
 
-        if (! originalCalendarEvent.getUsername().equals(eventMap.get("username"))) {
+        if (! originalCalendarEvent.getUsername().equals(calendarEventMap.get("username"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource);
         }
 
@@ -40,6 +40,4 @@ public class CalendarEventService {
 
         return ResponseEntity.ok(resource);
     }
-
-
 }
