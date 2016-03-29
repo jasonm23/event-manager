@@ -46,7 +46,7 @@ public class CalendarEventCrudTest {
 
     private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     CalendarEvent existingCalendarEvent;
-    String calendarEventDateString = "2016-03-18T14:33:00+0000";
+    String calendarEventDateString = "2016-03-18T14:33:00+00:00";
     Date calendarEventDate;
 
     @Value("${local.server.port}")

@@ -19,9 +19,7 @@ import java.util.List;
 @Entity
 public class CalendarEvent implements Serializable {
 
-    public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
-    private final static DateFormat dateFormat = new SimpleDateFormat(FORMAT_STRING);
-    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssX";
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
     @Id
