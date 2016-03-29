@@ -56,7 +56,7 @@ public class CancelCalendarEventTest {
         existingCalendarEvent.setUsername("Joe");
         calendarEventRepository.save(existingCalendarEvent);
 
-        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, existingCalendarEvent.getId());
+        cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
     }
 
     @After
@@ -133,7 +133,7 @@ public class CancelCalendarEventTest {
 
     @Test
     public void cancelNonExistingEvent() {
-        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, 100L);
+        cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, 200L);
         String jsonInput = "{\"username\":\"Joe\"}";
 
         given().

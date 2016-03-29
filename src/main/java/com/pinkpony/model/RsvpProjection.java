@@ -1,4 +1,4 @@
-package com.pinkpony.repository;
+package com.pinkpony.model;
 
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
