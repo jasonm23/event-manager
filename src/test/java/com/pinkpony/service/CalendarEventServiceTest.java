@@ -46,7 +46,7 @@ public class CalendarEventServiceTest {
 
     @Test
     public void testCancelEventSuccessfully() {
-        ResponseEntity response = eventService.update(event.getId(), eventData);
+        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
 
         assertEquals(HttpStatus.OK,response.getStatusCode());
 
@@ -56,10 +56,10 @@ public class CalendarEventServiceTest {
     }
 
     @Test
-    public void testCancelEventWithWrongOrganizer() {
+    public void testCancelEventWithWrongOrganizerValue() {
         eventData.put("username", "Lynwood");
 
-        ResponseEntity response = eventService.update(event.getId(), eventData);
+        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
 
         assertEquals(HttpStatus.FORBIDDEN,response.getStatusCode());
         CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
@@ -67,13 +67,39 @@ public class CalendarEventServiceTest {
     }
 
     @Test
-    public void testCancelEventWithWrongCancelStatus() {
-        eventData.put("cancelled", "random");
+    public void cancelCalendarEventWithWrongOrganiserKey(){
+        eventData.remove("username");
+        eventData.put("name", "Frankel");
 
-        ResponseEntity response = eventService.update(event.getId(), eventData);
+        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
 
         assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
         CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
         assertEquals(false, cancelledEvent.isCancelled());
+    }
+
+    @Test
+    public void cancelSameEventMultipleTimes() {
+        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
+
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+
+        assertTrue(response.getBody() instanceof Resource);
+        CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
+        assertEquals(true, cancelledEvent.isCancelled());
+
+
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+
+        assertTrue(response.getBody() instanceof Resource);
+        cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
+        assertEquals(true, cancelledEvent.isCancelled());
+    }
+
+    @Test
+    public void cancelNonExistingEvent() {
+        ResponseEntity response = eventService.cancelEvent(100L, eventData);
+
+        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
     }
 }

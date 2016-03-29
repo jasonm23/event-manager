@@ -16,6 +16,7 @@ public interface CalendarEventProjection {
     String getDescription();
     String getUsername();
     String getVenue();
+    Boolean getCancelled();
 
     List<Rsvp> getRsvps();
 }
