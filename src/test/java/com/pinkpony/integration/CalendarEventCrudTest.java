@@ -87,6 +87,7 @@ public class CalendarEventCrudTest {
         json.put("venue", "Arrowhead Lounge");
 
         given().
+            header("ACCEPT" , "application/json").
             contentType(ContentType.JSON).
             body(json.toString()).
         when().log().all().
