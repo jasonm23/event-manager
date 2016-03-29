@@ -1,15 +1,15 @@
 {
-  "command": "event",
-  "base_url": "http://dev-pinkpony.cfapps.io/",
-  "subcommands": [
+  "name": "event",
+  "endpoint": "http://dev-pinkpony.cfapps.io/",
+  "subCommands": [
     {
       "name": "create",
       "arguments": [
-        {"name": "/\\w+\\s*/"},
-        {"description": "/\\w+\\s*/"},
+        {"name": "/.+/"},
+        {"description": "/.+/"},
         {"ignore": "/(on|at)/"},
         {"calendarEventDateTime": "TIMESTAMP"},
-        {"venue": "/\\w+/"}
+        {"venue": "/.+/"}
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/",
       "method": "POST",

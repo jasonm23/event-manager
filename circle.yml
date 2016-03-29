@@ -28,3 +28,4 @@ deployment:
     branch: master
     commands:
       - cf push
+      - curl $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json || echo "failed to push config to marvin-bot"
