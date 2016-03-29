@@ -16,11 +16,11 @@ public class CalendarEventService {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<Resource> cancelEvent(Long eventId, Map<String, String> calendarEventMap) {
+    public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> calendarEventMap) {
         CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
 
         if( originalCalendarEvent == null ) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Resource<CalendarEvent>(originalCalendarEvent));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
         }
 
         Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);

@@ -15,7 +15,7 @@ public class CalendarEventRestController {
     CalendarEventService calendarEventService;
 
     @RequestMapping(value="/calendarEvents/{calendarEventId}", method = RequestMethod.PATCH)
-    public @ResponseBody ResponseEntity<Resource> updateCalendarEvent(@PathVariable Long calendarEventId,
+    public @ResponseBody ResponseEntity<?> updateCalendarEvent(@PathVariable Long calendarEventId,
                                                                       @RequestBody Map<String, String> calendarEventMap) {
         return calendarEventService.cancelEvent(calendarEventId, calendarEventMap);
    }
