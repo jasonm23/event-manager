@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "eventMessage", types = CalendarEvent.class)
-public interface CalendarEveneMessageProjection {
+public interface CalendarEventMessageProjection {
     String getName();
     String getDescription();
     String getOrganizer();
