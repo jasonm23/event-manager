@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.config.Projection;
 public interface CalendarEventMessageProjection {
     String getName();
     String getDescription();
-    String getOrganizer();
+    String getUsername();
     String getVenue();
 
     @Value("event #{target.name} created")
