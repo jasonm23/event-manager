@@ -5,6 +5,7 @@ import com.pinkpony.validator.RsvpValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 
@@ -16,18 +17,6 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
 
     @Autowired
     RsvpValidator rsvpValidator;
-
-    @Bean
-    public RsvpValidator rsvpValidator()
-    {
-        return new RsvpValidator();
-    }
-
-    @Bean
-    public CalendarEventValidator calendarEventValidator()
-    {
-        return new CalendarEventValidator();
-    }
 
     @Override
     public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {

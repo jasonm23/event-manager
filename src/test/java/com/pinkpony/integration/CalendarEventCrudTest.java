@@ -2,6 +2,7 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.pinkpony.config.AppConfig;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
@@ -359,5 +360,61 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
                 body("errors[1].invalidValue", equalTo(""));
+    }
+
+
+    @Test
+    public void createCalendarEventWithGenericAcceptHeader() throws Exception {
+
+        JSONObject json = new JSONObject();
+        json.put("name", "Spring Boot Night");
+        json.put("calendarEventDateTime", calendarEventDateString);
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("username", "Joe");
+        json.put("venue", "Arrowhead Lounge");
+
+        given().
+                header("ACCEPT" , "application/json").
+                contentType(ContentType.JSON).
+                body(json.toString()).
+                when().log().all().
+                post("/calendarEvents").
+                then().
+                statusCode(201).
+                body("name", equalTo("Spring Boot Night")).
+                body("description", equalTo("A Big Night of CalendarEventness")).
+                body("venue", equalTo("Arrowhead Lounge")).
+                body("calendarEventDateTime", equalTo(calendarEventDateString)).
+                body("username", equalTo("Joe")).
+                body(not(hasItem("message"))).
+                body(not(hasItem("message_type")));
+
+    }
+
+    @Test
+    public void createCalendarEventWithMarvinAcceptHeader() throws Exception {
+
+        JSONObject json = new JSONObject();
+        json.put("name", "Spring Boot Night");
+        json.put("calendarEventDateTime", calendarEventDateString);
+        json.put("description", "A Big Night of CalendarEventness");
+        json.put("username", "Joe");
+        json.put("venue", "Arrowhead Lounge");
+
+        given().
+                header("ACCEPT" , AppConfig.MARVIN_JSON_MEDIATYPE).
+                contentType(ContentType.JSON).
+                body(json.toString()).
+                when().log().all().
+                post("/calendarEvents").
+                then().
+                statusCode(201).
+                body("name", equalTo("Spring Boot Night")).
+                body("description", equalTo("A Big Night of CalendarEventness")).
+                body("venue", equalTo("Arrowhead Lounge")).
+                body("calendarEventDateTime", equalTo(calendarEventDateString)).
+                body("username", equalTo("Joe")).
+                body("message", equalTo("event "+ json.get("name")+" created")).
+                body("message_type", equalTo("channel"));
     }
 }
