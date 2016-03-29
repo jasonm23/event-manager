@@ -24,23 +24,9 @@ import java.util.Date;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = PinkPonyApplication.class)
-@WebAppConfiguration
-@IntegrationTest("server.port:0")
-public class CancelCalendarEventTest {
+public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
 
-    @Autowired
-    CalendarEventRepository calendarEventRepository;
-
-    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
-    String calendarEventDateString = "2016-03-18T14:33:00+0000";
-    CalendarEvent existingCalendarEvent;
-    Date calendarEventDate;
     String cancelUri;
-
-    @Value("${local.server.port}")
-    int port;
 
     @Before
     public void setUp() throws ParseException {

@@ -2,51 +2,25 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
-import com.pinkpony.repository.CalendarEventRepository;
-import com.pinkpony.repository.RsvpRepository;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = PinkPonyApplication.class)
-@WebAppConfiguration
-@IntegrationTest("server.port:0")
-public class RsvpTest {
+public class RsvpTest extends PinkPonyIntegrationBase {
     public String eventUri;
-    @Autowired
-    CalendarEventRepository calendarEventRepository;
-
-    @Autowired
-    RsvpRepository rsvpRepository;
-
-    @Autowired
-    MessageSource messageSource;
 
     CalendarEvent calendarEvent;
-    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     String eventDateString = "2016-04-18T14:33:00+0000";
-    Date calendarEventDate;
+
     @Value("${local.server.port}")
     int port;
 
@@ -126,14 +100,5 @@ public class RsvpTest {
                 body("errors[1].invalidValue", equalTo(""));
 
         //TODO: add more assertions about the shape and content of error messages in response
-    }
-
-    private Rsvp createTestRsvp(String name, String response) {
-        Rsvp rsvp = new Rsvp();
-        rsvp.setUsername(name);
-        rsvp.setResponse(response);
-        rsvp.calendarEvent = calendarEvent;
-        rsvpRepository.save(rsvp);
-        return rsvp;
     }
 }
