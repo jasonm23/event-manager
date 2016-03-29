@@ -21,7 +21,7 @@ server:
 
 logging:
   level.org.springframework.web: DEBUG
-  level.org.hibernate: ERROR
+  level.org.hibernate: DEBUG
 
 # NOTE: Can use an integrated yml profile - instead of the java -circleci.properties file.
 ---
@@ -41,3 +41,21 @@ spring:
     hibernate.ddl-auto: update
     show-sql: true
     format-sql: true
+---
+spring:
+  profiles: cloud
+
+  application:
+    name: pinkpony
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+    format-sql: true
+
+logging:
+  level.org.springframework.web: DEBUG
+  level.org.hibernate: ERROR
