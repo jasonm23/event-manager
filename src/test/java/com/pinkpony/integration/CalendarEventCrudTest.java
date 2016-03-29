@@ -2,7 +2,6 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
@@ -11,15 +10,10 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -29,53 +23,7 @@ import java.util.Date;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = PinkPonyApplication.class)
-@WebAppConfiguration
-@IntegrationTest("server.port:0")
-public class CalendarEventCrudTest {
-
-    @Autowired
-    CalendarEventRepository calendarEventRepository;
-
-    @Autowired
-    RsvpRepository rsvpRepository;
-
-    @Autowired
-    MessageSource messageSource;
-
-    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
-    CalendarEvent existingCalendarEvent;
-    String calendarEventDateString = "2016-03-18T14:33:00+0000";
-    Date calendarEventDate;
-
-    @Value("${local.server.port}")
-    int port;
-
-    @Before
-    public void setUp() throws ParseException {
-        RestAssured.port = port;
-        calendarEventDate = dateFormat.parse(calendarEventDateString);
-        existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
-    }
-
-    @After
-    public void tearDown() {
-        //TODO: why is this not doing whast we think?
-        rsvpRepository.deleteAll();
-        calendarEventRepository.deleteAll();
-    }
-
-    private CalendarEvent makeCalendarEvent(Date date) {
-        CalendarEvent newCalendarEvent = new CalendarEvent();
-        newCalendarEvent.setName("Spring Boot Night");
-        newCalendarEvent.setDescription("Wanna learn how to boot?");
-        newCalendarEvent.setVenue("Arrowhead Lounge");
-        newCalendarEvent.setCalendarEventDateTime(date);
-        newCalendarEvent.setUsername("Holly");
-
-        return newCalendarEvent;
-    }
+public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
 
     @Test
     public void createCalendarEvent() throws Exception {
@@ -135,7 +83,7 @@ public class CalendarEventCrudTest {
             contentType(ContentType.JSON).
         when().
             get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
-        then().
+        then().log().all().
             statusCode(200).
             body("_embedded.rsvps[0].username", containsString("Billy")).
             body("_embedded.rsvps[0].response", containsString("yes")).
@@ -178,16 +126,6 @@ public class CalendarEventCrudTest {
             statusCode(200).
             body("response", equalTo("no")).
             body("username", equalTo("Bobby"));
-    }
-
-    private Rsvp createTestRsvp(String username, String response) {
-        Rsvp rsvp = new Rsvp();
-        rsvp.setUsername(username);
-        rsvp.setResponse(response);
-        rsvp.calendarEvent = existingCalendarEvent;
-
-        rsvpRepository.save(rsvp);
-        return rsvp;
     }
 
     @Test
