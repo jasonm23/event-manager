@@ -60,3 +60,4 @@ spring:
 logging:
   level.org.hibernate: ERROR
   level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+  level.org.apache.coyote.http11: DEBUG # Log all HTTP1.1 stuff
