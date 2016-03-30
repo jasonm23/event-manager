@@ -2,24 +2,12 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
-import com.pinkpony.repository.CalendarEventRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -42,7 +30,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
         existingCalendarEvent.setUsername("Joe");
         calendarEventRepository.save(existingCalendarEvent);
 
-        cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, existingCalendarEvent.getId());
+        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, existingCalendarEvent.getId());
     }
 
     @After
@@ -119,7 +107,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
 
     @Test
     public void cancelNonExistingEvent() {
-        cancelUri = String.format("http://localhost:%d/calendarEvents/%d", port, 200L);
+        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, 200L);
         String jsonInput = "{\"username\":\"Joe\"}";
 
         given().

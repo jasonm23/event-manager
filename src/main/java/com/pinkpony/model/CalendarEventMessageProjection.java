@@ -1,7 +1,6 @@
 package com.pinkpony.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.pinkpony.model.CalendarEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
