@@ -6,7 +6,6 @@ import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,12 +43,8 @@ public class UpcomingCalendarEventTest {
 
     @Before
     public void setUp() {
-        RestAssured.port = port;
-    }
-
-    @After
-    public void tearDown() {
         calendarEventRepository.deleteAll();
+        RestAssured.port = port;
     }
 
     private CalendarEvent makeCalendarEvent(Date date) {

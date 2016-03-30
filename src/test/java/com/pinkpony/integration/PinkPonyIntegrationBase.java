@@ -49,16 +49,12 @@ abstract class PinkPonyIntegrationBase {
 
     @Before
     public void setUp() throws ParseException {
+        rsvpRepository.deleteAll();
+        calendarEventRepository.deleteAll();
+
         RestAssured.port = port;
         calendarEventDate = dateFormat.parse(calendarEventDateString);
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
-    }
-
-    @After
-    public void tearDown() {
-        //TODO: why is this not doing what we think?
-        rsvpRepository.deleteAll();
-        calendarEventRepository.deleteAll();
     }
 
     public CalendarEvent makeCalendarEvent(Date date) {
