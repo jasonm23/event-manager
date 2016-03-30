@@ -29,5 +29,6 @@ deployment:
     branch: master
     commands:
       - cf push
+      - curl --version
       - echo `pwd`
       - curl -v -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json
