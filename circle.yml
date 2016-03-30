@@ -30,4 +30,4 @@ deployment:
     commands:
       - cf push
       - echo `pwd`
-      - curl -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json
+      - curl -v -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json
