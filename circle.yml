@@ -12,6 +12,7 @@ machine:
 
   environment:
     SPRING_PROFILES_ACTIVE: circleci
+    MARVIN_BOT_CONF_URI: 'http://marvin-bot.cfapps.io/api/v1/commands'
 
 test:
   post:
@@ -28,4 +29,4 @@ deployment:
     branch: master
     commands:
       - cf push
-      - curl $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json || echo "failed to push config to marvin-bot"
+      - curl -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json

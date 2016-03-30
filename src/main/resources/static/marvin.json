@@ -5,10 +5,10 @@
     {
       "name": "create",
       "arguments": [
-        {"name": "/(.+)\s+\|\s+"},
-        {"description": "/(.+)\s+\|\s+"},
-        {"venue": "/(.+)\s+\|\s+"},
-        {"calendarEventDateTime": "TIMESTAMP"},
+        {"name": "/(.+?)\\|/"},
+        {"description": "/(.+?)\\|/"},
+        {"venue": "/(.+?)\\|/"},
+        {"calendarEventDateTime": "TIMESTAMP"}
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/",
       "method": "POST",
@@ -18,7 +18,7 @@
     {
       "name": "rsvp",
       "arguments": [
-        {"calendarEvent": "/(https?.*?)\s/"},
+        {"calendarEvent": "/(https?.*?)\\s/"},
         {"response": "/(yes|no)/"}
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/rsvps",
