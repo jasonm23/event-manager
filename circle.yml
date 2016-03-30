@@ -29,4 +29,4 @@ deployment:
     branch: master
     commands:
       - cf push
-      - curl -v -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json -H "Content-Type: application/json"
+      - "curl -v -f $MARVIN_BOT_CONF_URI -d @src/main/resources/static/marvin.json -H \"Content-Type: application/json\""
