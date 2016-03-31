@@ -1,24 +1,10 @@
 package com.pinkpony.integration;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
-import com.pinkpony.repository.CalendarEventRepository;
-import com.pinkpony.repository.RsvpRepository;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;

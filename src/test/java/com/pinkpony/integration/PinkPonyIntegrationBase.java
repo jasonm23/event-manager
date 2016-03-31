@@ -7,9 +7,7 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,16 +47,12 @@ abstract class PinkPonyIntegrationBase {
 
     @Before
     public void setUp() throws ParseException {
+        rsvpRepository.deleteAll();
+        calendarEventRepository.deleteAll();
+
         RestAssured.port = port;
         calendarEventDate = dateFormat.parse(calendarEventDateString);
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
-    }
-
-    @After
-    public void tearDown() {
-        //TODO: why is this not doing what we think?
-        rsvpRepository.deleteAll();
-        calendarEventRepository.deleteAll();
     }
 
     public CalendarEvent makeCalendarEvent(Date date) {

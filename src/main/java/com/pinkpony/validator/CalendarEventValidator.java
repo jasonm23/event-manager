@@ -1,7 +1,6 @@
 package com.pinkpony.validator;
 
 import com.pinkpony.model.CalendarEvent;
-import org.springframework.expression.ParseException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
