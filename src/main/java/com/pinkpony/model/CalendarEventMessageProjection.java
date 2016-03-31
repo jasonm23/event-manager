@@ -11,6 +11,9 @@ public interface CalendarEventMessageProjection {
     String getUsername();
     String getVenue();
 
+    @JsonProperty("calendarEventDateTime")
+    String getCalendarEventDateTimeString();
+
     @Value("event #{target.name} created")
     String getMessage();
 
