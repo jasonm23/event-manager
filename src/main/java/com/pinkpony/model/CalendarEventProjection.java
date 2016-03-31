@@ -1,5 +1,6 @@
 package com.pinkpony.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import org.springframework.data.rest.core.config.Projection;
@@ -17,6 +18,9 @@ public interface CalendarEventProjection {
     String getUsername();
     String getVenue();
     Boolean getCancelled();
+
+    @JsonProperty("calendarEventDateTime")
+    String getCalendarEventDateTimeString();
 
     List<Rsvp> getRsvps();
 }

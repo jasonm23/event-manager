@@ -1,18 +1,33 @@
 package com.pinkpony.service;
 
+import com.pinkpony.config.AppConfig;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.CalendarEventMessageProjection;
 import com.pinkpony.model.CalendarEventProjection;
 import com.pinkpony.repository.CalendarEventRepository;
+import com.pinkpony.validator.CalendarEventValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import org.springframework.data.rest.core.RepositoryConstraintViolationException;
+import org.springframework.data.rest.core.ValidationErrors;
+import org.springframework.data.rest.webmvc.ControllerUtils;
+import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
+import org.springframework.data.rest.webmvc.support.RepositoryConstraintViolationExceptionMessage;
 import org.springframework.hateoas.Resource;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -49,24 +64,34 @@ public class CalendarEventService {
         return ResponseEntity.ok(resource);
     }
 
-    public ResponseEntity<?> createEvent(CalendarEvent calendarEvent, HttpRequest request) {
+    public  ResponseEntity<ResourceSupport> createEvent(CalendarEvent calendarEvent, HttpServletRequest request) {
+
+        //Perform validation first
+        CalendarEventValidator validator = new CalendarEventValidator();
+        BindingResult result = new BeanPropertyBindingResult(calendarEvent, "CalendarEvent");
+        validator.validate(calendarEvent, result);
+
+        if (result.hasErrors()){
+            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
+            Resource<?> errorResource = new Resource<>(message);
+            return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), errorResource);
+        }
 
         //persist our data
         CalendarEvent savedEvent = calendarEventRepository.save(calendarEvent);
 
-        //construct a project of our data
-        CalendarEventMessageProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
-
         //get the request accept header. inspect
-        if(request.getHeaders().getAccept().contains(MediaType.APPLICATION_JSON)){
-
-        }else if(request.getHeaders().getAccept().contains(MediaType.APPLICATION_JSON)){
-
+        Resource<?> calendarEventResource;
+        if(request.getHeader("Accept").equals(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE)){
+            CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
+            calendarEventResource = new Resource<>(calendarEventMessageProjection);
+        } else {
+            //wrap our projection in a HateOS resource for response
+            CalendarEventProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventProjection.class, calendarEvent);
+            calendarEventResource = new Resource<>(calendarEventProjection);
         }
 
-        //wrap our projection in a HateOS resource for response
-        Resource<CalendarEventMessageProjection> calendarEventResource = new Resource<>(calendarEventProjection);
-        return ResponseEntity.status(HttpStatus.CREATED).body(calendarEventResource);
+        return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), calendarEventResource);
 
     }
 }
