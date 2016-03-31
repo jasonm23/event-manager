@@ -6,6 +6,7 @@ import com.pinkpony.PinkPonyApplication;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -31,10 +34,12 @@ public class UpcomingCalendarEventTest {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
+    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+
     @Value("${local.server.port}")
     int port;
 
-    private DateTime today = new DateTime();
+    private DateTime today = new DateTime(DateTimeZone.forID("UTC"));
     private DateTime yesterday = today.minusDays(1);
     private DateTime tomorrow = today.plusDays(1);
     private DateTime nextWeek = today.plusWeeks(1);
@@ -90,6 +95,8 @@ public class UpcomingCalendarEventTest {
             statusCode(200).
             body("_embedded.calendarEvents", hasSize(2)).
             body("_embedded.calendarEvents[0].name", equalTo("future event")).
-            body("_embedded.calendarEvents[1].name", equalTo("future event next week"));
+            body("_embedded.calendarEvents[0].calendarEventDateTime", equalTo(dateFormat.format(tomorrow.toDate()))).
+            body("_embedded.calendarEvents[1].name", equalTo("future event next week")).
+            body("_embedded.calendarEvents[1].calendarEventDateTime", equalTo(dateFormat.format(nextWeek.toDate())));
     }
 }

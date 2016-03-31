@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
 public class CalendarEvent implements Serializable {
 
     public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssX";
+    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
     @Id
@@ -43,6 +47,10 @@ public class CalendarEvent implements Serializable {
 
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    public String getFormattedEventDateTime() {
+        return dateFormat.format(getCalendarEventDateTime());
     }
 
     public String getCalendarEventDateTimeString() {
