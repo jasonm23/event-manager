@@ -82,10 +82,11 @@ public class RsvpTest extends PinkPonyIntegrationBase {
     }
 
     @Test
-    public void rsvpWithNoFields() throws Exception {
+    public void rsvpWithEmptyFields() throws Exception {
         JSONObject json = new JSONObject();
         json.put("username", "");
         json.put("response", "");
+        json.put("calendarEvent", "");
         //TODO: should we just test invalid post here? not all missing fields since this is duplicating the rsvpval unit tsts?
 
         given().
@@ -95,14 +96,20 @@ public class RsvpTest extends PinkPonyIntegrationBase {
                 post(String.format("/rsvps")).
             then().
                 statusCode(400).
-                body("errors", hasSize(3)).
+                body("errors", hasSize(4)).
                 body("errors[0].entity", equalTo("Rsvp")).
                 body("errors[0].message", equalTo(messageSource.getMessage("rsvp.username.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[0].property", equalTo("username")).
                 body("errors[0].invalidValue", equalTo("")).
                 body("errors[1].message", equalTo(messageSource.getMessage("rsvp.response.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("response")).
-                body("errors[1].invalidValue", equalTo(""));
+                body("errors[1].invalidValue", equalTo("")).
+                body("errors[2].message", equalTo(messageSource.getMessage("rsvp.response.field.invalidValue", null, LocaleContextHolder.getLocale()))).
+                body("errors[2].property", equalTo("response")).
+                body("errors[2].invalidValue", equalTo("")).
+                body("errors[3].message", equalTo(messageSource.getMessage("rsvp.calendarEvent.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[3].property", equalTo("calendarEvent")).
+                body("errors[3].invalidValue", equalTo("null"));
 
         //TODO: add more assertions about the shape and content of error messages in response
     }

@@ -32,4 +32,8 @@ public class Rsvp {
     public Long getId() {
         return id;
     }
+
+    public CalendarEvent getCalendarEvent() {
+        return this.calendarEvent;
+    }
 }
