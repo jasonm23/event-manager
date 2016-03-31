@@ -1,5 +1,6 @@
 package com.pinkpony.model;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.util.List;
@@ -10,6 +11,9 @@ public interface CalendarEventProjection {
     String getDescription();
     String getUsername();
     String getVenue();
+
+    @Value("#{ target.getFormattedEventDateTime() }")
+    String getCalendarEventDateTime();
     Boolean getCancelled();
 
     List<Rsvp> getRsvps();
