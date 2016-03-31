@@ -39,6 +39,9 @@ public class CalendarEventService {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
+    @Autowired
+    MessageSource messageSource;
+
     public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> calendarEventMap) {
         CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
 
@@ -74,7 +77,7 @@ public class CalendarEventService {
         if (result.hasErrors()){
             RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
             Resource<?> errorResource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), errorResource);
+            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource);
         }
 
         //persist our data
