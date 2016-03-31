@@ -1,6 +1,6 @@
 package com.pinkpony.controller;
 
-import com.pinkpony.config.AppConfig;
+import com.pinkpony.config.MarvinMediaTypes;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.service.CalendarEventService;
@@ -32,7 +32,7 @@ public class CalendarEventRestController {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    @RequestMapping(value="/calendarEvents", method = RequestMethod.POST, consumes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE, AppConfig.MARVIN_JSON_MEDIATYPE_VALUE})
+    @RequestMapping(value="/calendarEvents", method = RequestMethod.POST, consumes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE, MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE})
     public @ResponseBody ResponseEntity<ResourceSupport> createEvent(@RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
         return calendarEventService.createEvent(calendarEvent, request);
     }

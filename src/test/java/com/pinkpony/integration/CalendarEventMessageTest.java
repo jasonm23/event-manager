@@ -1,7 +1,7 @@
 package com.pinkpony.integration;
 
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.config.AppConfig;
+import com.pinkpony.config.MarvinMediaTypes;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
         json.put("venue","Da Hacienda");
 
         given().
-                accept(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE).
+                accept(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE).
                 contentType(ContentType.JSON).
                 body(json.toString()).
         when().
@@ -67,7 +67,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
         json.put("venue", "Arrowhead Lounge");
 
         given().
-                accept(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE).
+                accept(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE).
                 contentType(ContentType.JSON).
                 body(json.toString()).
         when().
@@ -94,7 +94,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
         json.put("venue", "Arrowhead Lounge");
 
         given().
-                accept(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE).
+                accept(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE).
                 contentType(ContentType.JSON).
                 body(json.toString()).
         when().

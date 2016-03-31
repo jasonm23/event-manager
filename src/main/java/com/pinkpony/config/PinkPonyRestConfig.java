@@ -6,8 +6,12 @@ import com.pinkpony.validator.RsvpUpdateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
+import org.springframework.http.MediaType;
+import org.springframework.validation.DefaultMessageCodesResolver;
+import org.springframework.validation.MessageCodesResolver;
 
 @Configuration
 public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
@@ -20,6 +24,19 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
 
     @Autowired
     RsvpUpdateValidator rsvpUpdateValidator;
+
+    @Bean
+    public MessageCodesResolver messageCodesResolver(){
+        DefaultMessageCodesResolver resolver = new DefaultMessageCodesResolver();
+        resolver.setMessageCodeFormatter(DefaultMessageCodesResolver.Format.PREFIX_ERROR_CODE);
+
+        return resolver;
+    }
+
+    @Bean
+    SpelAwareProxyProjectionFactory spelAwareProxyProjectionFactory(){
+        return new SpelAwareProxyProjectionFactory();
+    }
 
     @Bean
     public RsvpCreateValidator rsvpCreateValidator()

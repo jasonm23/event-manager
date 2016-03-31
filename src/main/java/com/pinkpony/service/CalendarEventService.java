@@ -1,6 +1,6 @@
 package com.pinkpony.service;
 
-import com.pinkpony.config.AppConfig;
+import com.pinkpony.config.MarvinMediaTypes;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.CalendarEventMessageProjection;
 import com.pinkpony.model.CalendarEventProjection;
@@ -80,7 +80,7 @@ public class CalendarEventService {
 
         //get the request accept header. inspect
         Resource<?> calendarEventResource;
-        if(request.getHeader("Accept").equals(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE)){
+        if(request.getHeader("Accept").equals(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE)){
             CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
             calendarEventResource = new Resource<>(calendarEventMessageProjection);
         } else {
