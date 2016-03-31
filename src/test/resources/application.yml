@@ -17,7 +17,7 @@ spring:
     format-sql: true
 
 logging:
-  level.org.springframework.web: DEBUG
+  level.org.springframework: ERROR
   level.org.hibernate: ERROR
 
 ---
