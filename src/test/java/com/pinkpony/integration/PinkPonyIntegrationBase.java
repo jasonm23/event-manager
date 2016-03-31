@@ -55,6 +55,7 @@ abstract class PinkPonyIntegrationBase {
         rsvpRepository.deleteAll();
         calendarEventRepository.deleteAll();
         calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
+        calendarEventDateString = dateFormat.format(calendarEventDate);
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
     }
 
@@ -63,18 +64,34 @@ abstract class PinkPonyIntegrationBase {
         newCalendarEvent.setName("Spring Boot Night");
         newCalendarEvent.setDescription("Wanna learn how to boot?");
         newCalendarEvent.setVenue("Arrowhead Lounge");
-        newCalendarEvent.setCalendarEventDateTime(date);
         newCalendarEvent.setUsername("Holly");
+
+        newCalendarEvent.setCalendarEventDateTime(date);
+        newCalendarEvent.setCalendarEventDateTimeString(toUTCString(date));
+
         return newCalendarEvent;
     }
 
-    public Rsvp createTestRsvp(String username, String response) {
+    public CalendarEvent addRsvp(CalendarEvent event, String response, String username) {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setUsername(username);
+        rsvp.setResponse(response);
+        event.addRsvp(rsvp);
+        return calendarEventRepository.save(event);
+    }
+
+    public Rsvp createTestRsvp(String response, String username) {
         Rsvp rsvp = new Rsvp();
         rsvp.setUsername(username);
         rsvp.setResponse(response);
         rsvp.calendarEvent = existingCalendarEvent;
-        rsvpRepository.save(rsvp);
-        return rsvp;
+        return rsvpRepository.save(rsvp);
+    }
+
+    private String toUTCString(Date date) {
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return outputFormat.format(date);
     }
 
 }
