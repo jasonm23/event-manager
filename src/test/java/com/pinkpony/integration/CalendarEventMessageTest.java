@@ -30,7 +30,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body(json.toString()).
         when().
                 post("/calendarEvents?projection=eventMessage").
-        then().log().all().
+        then().
                 statusCode(201).
                 body("message", equalTo("event Bob's Blowout created")).
                 body("message_type", equalTo("channel"));
@@ -99,7 +99,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body(json.toString()).
         when().
                 post("/calendarEvents").
-        then().log().all().
+        then().
                 statusCode(201).
                 body("name", equalTo("Spring Boot Night")).
                 body("description", equalTo("A Big Night of CalendarEventness")).
