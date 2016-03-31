@@ -39,7 +39,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             header("ACCEPT" , "application/json").
             contentType(ContentType.JSON).
             body(json.toString()).
-        when().log().all().
+        when().
             post("/calendarEvents").
         then().
             statusCode(201).
@@ -84,7 +84,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             contentType(ContentType.JSON).
         when().
             get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
-        then().log().all().
+        then().
             statusCode(200).
             body("_embedded.rsvps[0].username", containsString("Billy")).
             body("_embedded.rsvps[0].response", containsString("yes")).
@@ -143,7 +143,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body(json.toString()).
         when().
             post("/calendarEvents").
-        then().log().all().
+        then().
             statusCode(400).
             body("errors", hasSize(1)).
             body("errors[0].entity", equalTo("CalendarEvent")).
@@ -347,7 +347,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body(json.toString()).
         when().
                 post("/calendarEvents").
-        then().log().all().
+        then().
                 statusCode(400).
                 body("errors", hasSize(2)).
 
@@ -377,9 +377,9 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 header("ACCEPT" , "application/json").
                 contentType(ContentType.JSON).
                 body(json.toString()).
-                when().log().all().
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(201).
                 body("name", equalTo("Spring Boot Night")).
                 body("description", equalTo("A Big Night of CalendarEventness")).
@@ -402,12 +402,12 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         json.put("venue", "Arrowhead Lounge");
 
         given().
-                header("Accept" , AppConfig.MARVIN_JSON_MEDIATYPE_VALUE).
+                accept(AppConfig.MARVIN_JSON_MEDIATYPE_VALUE).
                 contentType(ContentType.JSON).
                 body(json.toString()).
-                when().log().all().
+        when().
                 post("/calendarEvents").
-                then().
+        then().
                 statusCode(201).
                 body("name", equalTo("Spring Boot Night")).
                 body("description", equalTo("A Big Night of CalendarEventness")).
