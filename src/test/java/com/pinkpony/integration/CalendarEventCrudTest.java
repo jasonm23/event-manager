@@ -1,7 +1,6 @@
 package com.pinkpony.integration;
 
 import com.jayway.restassured.http.ContentType;
-import com.pinkpony.model.Rsvp;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -33,26 +32,6 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("venue", equalTo("Arrowhead Lounge")).
             body("calendarEventDateTime", equalTo(calendarEventDateString)).
             body("username", equalTo("Joe"));
-    }
-
-    @Test
-    public void createRsvp() throws Exception {
-        String calendarEventUri = String.format("http://localhost:%s/calendarEvents/%s", port, existingCalendarEvent.getId());
-        JSONObject json = new JSONObject();
-        json.put("username", "Gabe");
-        json.put("response", "yes");
-        json.put("event", calendarEventUri);
-
-        given().
-            contentType(ContentType.JSON).
-            body(json.toString()).
-        when().
-            post("/rsvps").
-        then().
-            statusCode(201).
-            body("_links.calendarEvent.href", containsString("/calendarEvent")).
-            body("username", equalTo("Gabe")).
-            body("response", equalTo("yes"));
     }
 
     @Test
@@ -100,239 +79,19 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
 //    }
 
     @Test
-    public void editRsvp() {
-        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
-
-        given().
-            contentType(ContentType.JSON).
-            request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
-        when().
-            patch(String.format("/rsvps/%s", testRsvp.getId())).
-        then().
-            statusCode(200).
-            body("response", equalTo("no")).
-            body("username", equalTo("Bobby"));
-    }
-
-    @Test
-    public void badRequestOnMissingNameField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("calendarEventDateTime", "2016-03-18T14:33:00+0000");
-        json.put("description", "A Big Night of CalendarEventness ");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-
-        given().
-            contentType(ContentType.JSON).
-            body(json.toString()).
-        when().
-            post("/calendarEvents").
-        then().
-            statusCode(400).
-            body("errors", hasSize(1)).
-            body("errors[0].entity", equalTo("CalendarEvent")).
-            body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.name.field.empty", null, LocaleContextHolder.getLocale()))).
-            body("errors[0].property", equalTo("name")).
-            body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void missingCalendarEventTimeOnlyReturnsOneError() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("name","Bob's bcalendarEig blowout");
-        json.put("description","A Big Night of CalendarEventness");
-        json.put("username","Joe");
-        json.put("venue","That amazing place");
+    public void badRequestOnErrors() throws Exception {
+        JSONObject params = new JSONObject();
+        params.put("description", "A Big Night of Eventness");
+        params.put("calendarEventDateTime", "not a date");
+        params.put("username", "Joe");
+        params.put("venue", "Arrowhead Lounge");
 
         given().
                 contentType(ContentType.JSON).
-                body(json.toString()).
+                body(params.toString()).
         when().
                 post("/calendarEvents").
         then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("calendarEventDateTimeString")).
-                body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void badRequestOnMissingDescriptionField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "name");
-        json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.description.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("description")).
-                body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void okRequestOnValidCalendarEventDateTimeFieldString() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "name");
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("calendarEventDateTime", "2015-03-11T11:00:00+0000");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(201);
-    }
-
-    @Test
-    public void badRequestOnMissingCalendarEventDateTimeField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "name");
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("calendarEventDateTimeString")).
-                body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void badRequestOnBlankCalendarEventDateTimeField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "name");
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-        json.put("calendarEventDateTime", "");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("calendarEventDateTimeString")).
-                body("errors[0].invalidValue", equalTo(""));
-    }
-
-    @Test
-    public void badRequestOnWrongFormattedCalendarEventDateTimeField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "name");
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("username", "Joe");
-        json.put("venue", "That amazing place");
-        json.put("calendarEventDateTime", "2015-03-11T11:00:00");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("calendarEventDateTimeString")).
-                body("errors[0].invalidValue", equalTo("2015-03-11T11:00:00"));
-    }
-
-    @Test
-    public void badRequestOnMissingVenueField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "Spring Boot Night");
-        json.put("calendarEventDateTime", calendarEventDateString);
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("username", "Joe");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.venue.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("venue")).
-                body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void badRequestOnMissingUsernameField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("name", "Spring Boot Night");
-        json.put("calendarEventDateTime", calendarEventDateString);
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("venue", "Arrowhead Lounge");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().
-                statusCode(400).
-                body("errors", hasSize(1)).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.username.field.empty", null, LocaleContextHolder.getLocale()))).
-                body("errors[0].property", equalTo("username")).
-                body("errors[0].invalidValue", equalTo("null"));
-    }
-
-    @Test
-    public void badRequestOnMultipleErrorsForField() throws Exception {
-        JSONObject json = new JSONObject();
-        json.put("id", "");
-        json.put("description", "A Big Night of CalendarEventness");
-        json.put("calendarEventDateTime", "");
-        json.put("username", "Joe");
-        json.put("venue", "Arrowhead Lounge");
-
-        given().
-                contentType(ContentType.JSON).
-                body(json.toString()).
-        when().
-                post("/calendarEvents").
-        then().log().all().
                 statusCode(400).
                 body("errors", hasSize(2)).
 
@@ -342,8 +101,8 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body("errors[0].invalidValue", equalTo("null")).
 
                 body("errors[1].entity", equalTo("CalendarEvent")).
-                body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
-                body("errors[1].invalidValue", equalTo(""));
+                body("errors[1].invalidValue", equalTo("not a date"));
     }
 }
