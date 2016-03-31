@@ -4,6 +4,9 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -20,6 +24,7 @@ public class RsvpTest extends PinkPonyIntegrationBase {
 
     CalendarEvent calendarEvent;
     String eventDateString = "2016-04-18T14:33:00+0000";
+    DateTime today = new DateTime(DateTimeZone.forID("UTC"));
 
     @Value("${local.server.port}")
     int port;
@@ -33,7 +38,7 @@ public class RsvpTest extends PinkPonyIntegrationBase {
         calendarEvent.setName("BG Night");
         calendarEvent.setDescription("A Big Night of CalendarEventness");
         calendarEvent.setVenue("That amazing place");
-        calendarEvent.setCalendarEventDateTime(calendarEventDate);
+        calendarEvent.setCalendarEventDateTime(today.plusDays(1).toDate());
         calendarEvent.setUsername("Joe");
         calendarEventRepository.save(calendarEvent);
 
@@ -47,7 +52,7 @@ public class RsvpTest extends PinkPonyIntegrationBase {
         JSONObject params = new JSONObject();
         params.put("username", "Gabe");
         params.put("response", "yes");
-        params.put("event", eventUri);
+        params.put("calendarEvent", eventUri);
 
         given().
                 contentType(ContentType.JSON).
@@ -68,9 +73,9 @@ public class RsvpTest extends PinkPonyIntegrationBase {
         given().
                 contentType(ContentType.JSON).
                 request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
-                when().
+            when().
                 patch(String.format("/rsvps/%s", testRsvp.getId())).
-                then().
+            then().
                 statusCode(200).
                 body("response", equalTo("no")).
                 body("username", equalTo("Bobby"));
@@ -100,5 +105,57 @@ public class RsvpTest extends PinkPonyIntegrationBase {
                 body("errors[1].invalidValue", equalTo(""));
 
         //TODO: add more assertions about the shape and content of error messages in response
+    }
+
+    @Test
+    public void creatRsvpToPastEventsShouldFail() throws JSONException {
+        Date pastDate = today.minusDays(1).toDate();
+        calendarEvent.setCalendarEventDateTime(pastDate);
+        calendarEventRepository.save(calendarEvent);
+
+        String eventUri = String.format("http://localhost:%s/events/%s", port, calendarEvent.getId());
+
+        JSONObject params = new JSONObject();
+        params.put("username", "Gabe");
+        params.put("response", "yes");
+        params.put("calendarEvent", eventUri);
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+                when().
+                post("/rsvps").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Rsvp")).
+                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.calendarEvent.field.createInThePast", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("calendarEvent"));
+    }
+
+    @Test
+    public void updateRsvpToPastEventsShouldFail() {
+        Date pastDate = today.minusDays(1).toDate();
+
+        calendarEvent.setCalendarEventDateTime(pastDate);
+        Rsvp savedRsvp = new Rsvp();
+        savedRsvp.setResponse("yes");
+        savedRsvp.setUsername("Bobby");
+        savedRsvp.calendarEvent = calendarEvent;
+
+        rsvpRepository.save(savedRsvp);
+        calendarEventRepository.save(calendarEvent);
+
+        given().
+                contentType(ContentType.JSON).
+                request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
+            when().
+                patch(String.format("/rsvps/%s", savedRsvp.getId())).
+            then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Rsvp")).
+                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.calendarEvent.field.updateInThePast", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("calendarEvent"));
     }
 }

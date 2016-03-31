@@ -9,12 +9,12 @@ import org.springframework.validation.Validator;
 import static org.hamcrest.Matchers.hasItemInArray;
 import static org.junit.Assert.*;
 
-public class RsvpValidatorTest {
-    RsvpValidator validator;
+public class RsvpCreateValidatorTest {
+    RsvpCreateValidator validator;
 
     @Before
     public void setUp() {
-        validator = new RsvpValidator();
+        validator = new RsvpCreateValidator();
     }
 
     @Test

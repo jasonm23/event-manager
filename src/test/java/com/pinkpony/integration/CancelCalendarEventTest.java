@@ -3,6 +3,8 @@ package com.pinkpony.integration;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.model.CalendarEvent;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +21,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
     @Before
     public void setUp() throws ParseException {
         RestAssured.port = port;
-        calendarEventDate = dateFormat.parse(calendarEventDateString);
+        calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
 
         existingCalendarEvent = new CalendarEvent();
         existingCalendarEvent.setName("BG Night");

@@ -7,6 +7,8 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.Rsvp;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ abstract class PinkPonyIntegrationBase {
         calendarEventRepository.deleteAll();
 
         RestAssured.port = port;
-        calendarEventDate = dateFormat.parse(calendarEventDateString);
+        calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
     }
 
