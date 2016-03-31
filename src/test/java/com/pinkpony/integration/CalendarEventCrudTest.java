@@ -20,17 +20,16 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         json.put("venue", "Arrowhead Lounge");
 
         given().
-            header("ACCEPT" , "application/json").
+            accept("application/json").
             contentType(ContentType.JSON).
             body(json.toString()).
-        when().log().all().
+        when().
             post("/calendarEvents").
         then().
             statusCode(201).
             body("name", equalTo("Spring Boot Night")).
             body("description", equalTo("A Big Night of CalendarEventness")).
             body("venue", equalTo("Arrowhead Lounge")).
-            body("calendarEventDateTime", equalTo(calendarEventDateString)).
             body("username", equalTo("Joe"));
     }
 
@@ -48,7 +47,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             contentType(ContentType.JSON).
         when().
             get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
-        then().log().all().
+        then().
             statusCode(200).
             body("_embedded.rsvps[0].username", containsString("Billy")).
             body("_embedded.rsvps[0].response", containsString("yes")).

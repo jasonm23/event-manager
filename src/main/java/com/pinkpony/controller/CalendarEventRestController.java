@@ -19,6 +19,7 @@ public class CalendarEventRestController {
 
     @Autowired
     CalendarEventService calendarEventService;
+
     @Autowired
     MessageCodesResolver messageCodesResolver;
 
@@ -31,12 +32,6 @@ public class CalendarEventRestController {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    @RequestMapping(value="/calendarEvents/{calendarEventId}", method = RequestMethod.PATCH)
-    public @ResponseBody ResponseEntity<?> updateCalendarEvent(@PathVariable Long calendarEventId,
-                                                               @RequestBody Map<String, String> calendarEventMap) {
-        return calendarEventService.cancelEvent(calendarEventId, calendarEventMap);
-    }
-
     @RequestMapping(value="/calendarEvents", method = RequestMethod.POST, consumes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE, AppConfig.MARVIN_JSON_MEDIATYPE_VALUE})
     public @ResponseBody ResponseEntity<ResourceSupport> createEvent(@RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
         return calendarEventService.createEvent(calendarEvent, request);
@@ -44,7 +39,7 @@ public class CalendarEventRestController {
 
     // TODO / FIXME : Make this a CalendarEvent REST action, ie: POST calendarEvents/:id/cancellation
     @RequestMapping(value="/cancelledEvents/{calendarEventId}", method = RequestMethod.PATCH)
-    public @ResponseBody ResponseEntity<?> cancel(@PathVariable Long calendarEventId,
+    public @ResponseBody ResponseEntity<?> updateEvent(@PathVariable Long calendarEventId,
                                                   @RequestBody Map<String, String> calendarEventMap) {
         return calendarEventService.cancelEvent(calendarEventId, calendarEventMap);
     }

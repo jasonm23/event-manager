@@ -36,7 +36,6 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body("message_type", equalTo("channel"));
     }
 
-
     @Test
     public void createCalendarEventWithGenericAcceptHeader() throws Exception {
 
@@ -56,13 +55,8 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
         then().
                 statusCode(201).
                 body("name", equalTo("Spring Boot Night")).
-                body("description", equalTo("A Big Night of CalendarEventness")).
-                body("venue", equalTo("Arrowhead Lounge")).
-                body("calendarEventDateTime", equalTo(calendarEventDateString)).
-                body("username", equalTo("Joe")).
                 body(not(hasItem("message"))).
                 body(not(hasItem("message_type")));
-
     }
 
     @Test
@@ -87,7 +81,6 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body("errors[1].entity", equalTo("CalendarEvent")).
                 body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.empty", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString"));
-
     }
 
     @Test
@@ -106,7 +99,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body(json.toString()).
         when().
                 post("/calendarEvents").
-        then().
+        then().log().all().
                 statusCode(201).
                 body("name", equalTo("Spring Boot Night")).
                 body("description", equalTo("A Big Night of CalendarEventness")).
