@@ -4,15 +4,18 @@ import com.pinkpony.model.Rsvp;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-
-public class RsvpValidator implements Validator {
+public class RsvpBaseValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-       return Rsvp.class.isAssignableFrom(aClass);
+        return Rsvp.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void validate(Object object, Errors errors) {
+        commonValidate(object, errors);
+    }
+
+    protected void commonValidate(Object object, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "rsvp.username.field.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "response", "rsvp.response.field.empty");
 
