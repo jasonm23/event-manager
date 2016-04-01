@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -40,6 +41,7 @@ abstract class PinkPonyIntegrationBase {
     public MessageSource messageSource;
 
     public static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+    static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
     public CalendarEvent existingCalendarEvent;
     public String calendarEventDateString = "2016-03-18T14:33:00+0000";
     public Date calendarEventDate;

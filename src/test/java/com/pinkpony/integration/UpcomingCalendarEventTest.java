@@ -20,6 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,6 +36,7 @@ public class UpcomingCalendarEventTest {
     CalendarEventRepository calendarEventRepository;
 
     private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+    static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
 
     @Value("${local.server.port}")
     int port;
