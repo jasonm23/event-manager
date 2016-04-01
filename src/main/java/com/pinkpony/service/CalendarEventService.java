@@ -37,50 +37,41 @@ public class CalendarEventService {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> calendarEventMap) {
-        CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(eventId);
+    public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> eventParams) {
+        CalendarEvent event = calendarEventRepository.findOne(eventId);
 
-        if( originalCalendarEvent == null ) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
-        }
+        if( event == null ) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(""); }
 
-        Resource<CalendarEvent> resource = new Resource<CalendarEvent>(originalCalendarEvent);
+        Resource<CalendarEvent> resource = new Resource<CalendarEvent>(event);
 
-        if (calendarEventMap.get("username") == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resource);
-        }
+        if (missingUsername(eventParams)){ return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resource); }
 
-        if (! originalCalendarEvent.getUsername().equals(calendarEventMap.get("username"))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource);
-        }
+        if (usernameMismatch(eventParams, event)) { return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource); }
 
-        if(! originalCalendarEvent.isCancelled()) {
-            originalCalendarEvent.setCancelled(true);
-            calendarEventRepository.save(originalCalendarEvent);
+        if(! event.isCancelled()) {
+            event.cancel();
+            calendarEventRepository.save(event);
         }
 
         return ResponseEntity.ok(resource);
     }
 
+    private boolean usernameMismatch(Map<String, String> calendarEventMap, CalendarEvent originalCalendarEvent) {
+        return ! originalCalendarEvent.getUsername().equals(calendarEventMap.get("username"));
+    }
+
+    private boolean missingUsername(Map<String, String> calendarEventMap) {
+        return calendarEventMap.get("username") == null;
+    }
+
     public  ResponseEntity<ResourceSupport> createEvent(CalendarEvent calendarEvent, HttpServletRequest request) {
+        ResponseEntity<ResourceSupport> errorResource = ensureValidity(calendarEvent);
+        if (errorResource != null) return errorResource;
 
-        //Perform validation first
-        CalendarEventValidator validator = new CalendarEventValidator();
-        BindingResult result = new BeanPropertyBindingResult(calendarEvent, "CalendarEvent");
-        validator.validate(calendarEvent, result);
-
-        if (result.hasErrors()){
-            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
-            Resource<?> errorResource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource);
-        }
-
-        //persist our data
         CalendarEvent savedEvent = calendarEventRepository.save(calendarEvent);
 
-        //get the request accept header. inspect
         Resource<?> calendarEventResource;
-        if(request.getHeader("Accept").equals(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE)){
+        if(isMarvinRequest(request)){
             CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
             calendarEventResource = new Resource<>(calendarEventMessageProjection);
         } else {
@@ -90,6 +81,23 @@ public class CalendarEventService {
         }
 
         return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), calendarEventResource);
-
     }
+
+    private boolean isMarvinRequest(HttpServletRequest request) {
+        return request.getHeader("Accept").equals(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE);
+    }
+
+    private ResponseEntity<ResourceSupport> ensureValidity(CalendarEvent calendarEvent) {
+        CalendarEventValidator validator = new CalendarEventValidator();
+        BindingResult result = new BeanPropertyBindingResult(calendarEvent, "CalendarEvent");
+        validator.validate(calendarEvent, result);
+
+        if (result.hasErrors()){
+            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
+            Resource<?> errorResource = new Resource<>(message);
+            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource);
+        }
+        return null;
+    }
+
 }
