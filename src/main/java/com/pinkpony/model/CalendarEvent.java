@@ -17,13 +17,17 @@ import java.util.TimeZone;
 public class CalendarEvent implements Serializable {
 
     public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssXXX";
+
     public final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
+
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
+
     private String name;
     private String description;
 
@@ -32,6 +36,7 @@ public class CalendarEvent implements Serializable {
 
     @JsonProperty("calendarEventDateTime")
     private String calendarEventDateTimeString;
+
     private String username;
     private String venue;
 

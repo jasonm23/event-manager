@@ -12,7 +12,7 @@ public interface CalendarEventProjection {
     String getUsername();
     String getVenue();
 
-    @Value("#{ target.getEventDateTimeAsUTCString() }")
+    @Value("#{ target.getFormattedEventDateTime() }")
     String getCalendarEventDateTime();
     Boolean getCancelled();
 
