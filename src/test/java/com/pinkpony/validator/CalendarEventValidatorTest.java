@@ -4,7 +4,16 @@ import com.pinkpony.model.CalendarEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasItemInArray;
 import static org.junit.Assert.assertEquals;
@@ -122,6 +131,11 @@ public class CalendarEventValidatorTest {
     private void assertValid(Object object, Validator validator) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(object, "_");
         validator.validate(object, errors);
-        assertEquals(0, errors.getErrorCount());
+
+        List<String> errorStrings = errors.getAllErrors().
+                stream().
+                map(ObjectError::toString).
+                collect(Collectors.toList());
+        assertEquals("Validation errors: \n" + String.join("\n",  errorStrings), 0, errors.getErrorCount());
     }
 }
