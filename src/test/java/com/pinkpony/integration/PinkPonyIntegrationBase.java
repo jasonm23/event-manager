@@ -42,7 +42,7 @@ abstract class PinkPonyIntegrationBase {
 
     public static DateFormat dateFormat = CalendarEvent.dateFormat;
     public CalendarEvent existingCalendarEvent;
-    public String calendarEventDateString = "2016-03-18T14:33:00+00:00";
+    public String calendarEventDateString;
     public Date calendarEventDate;
 
     @Value("${local.server.port}")

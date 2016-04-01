@@ -56,6 +56,7 @@ public class CalendarEvent implements Serializable {
         this.cancelled = cancelled;
     }
 
+    @JsonIgnore
     public String getFormattedEventDateTime() {
         return dateFormat.format(getCalendarEventDateTime());
     }
