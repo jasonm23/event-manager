@@ -51,10 +51,9 @@ abstract class PinkPonyIntegrationBase {
 
     @Before
     public void setUp() throws ParseException {
+        RestAssured.port = port;
         rsvpRepository.deleteAll();
         calendarEventRepository.deleteAll();
-
-        RestAssured.port = port;
         calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
     }

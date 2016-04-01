@@ -26,20 +26,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = PinkPonyApplication.class)
-@WebAppConfiguration
-@IntegrationTest("server.port:0")
-public class UpcomingCalendarEventTest {
-
-    @Autowired
-    CalendarEventRepository calendarEventRepository;
-
-    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
-    static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
-
-    @Value("${local.server.port}")
-    int port;
+public class UpcomingCalendarEventTest extends PinkPonyIntegrationBase{
 
     private DateTime today = new DateTime(DateTimeZone.forID("UTC"));
     private DateTime yesterday = today.minusDays(1);
@@ -47,23 +34,6 @@ public class UpcomingCalendarEventTest {
     private DateTime nextWeek = today.plusWeeks(1);
 
     private String upcomingUrl = "/calendarEvents/search/upcomingEvents";
-
-    @Before
-    public void setUp() {
-        calendarEventRepository.deleteAll();
-        RestAssured.port = port;
-    }
-
-    private CalendarEvent makeCalendarEvent(Date date) {
-        CalendarEvent newCalendarEvent = new CalendarEvent();
-        newCalendarEvent.setName("Spring Boot Night");
-        newCalendarEvent.setDescription("Wanna learn how to boot?");
-        newCalendarEvent.setVenue("Arrowhead Lounge");
-        newCalendarEvent.setCalendarEventDateTime(date);
-        newCalendarEvent.setUsername("Holly");
-
-        return newCalendarEvent;
-    }
 
     /*
      * An upcoming event is one that:
@@ -74,6 +44,8 @@ public class UpcomingCalendarEventTest {
      */
     @Test
     public void getUpcomingEvents() {
+        calendarEventRepository.deleteAll();
+
         CalendarEvent pastEvent = makeCalendarEvent(yesterday.toDate());
         pastEvent.setName("past event");
         CalendarEvent futureEventTmr = makeCalendarEvent(tomorrow.toDate());
