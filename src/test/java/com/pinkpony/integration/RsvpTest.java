@@ -68,13 +68,13 @@ public class RsvpTest extends PinkPonyIntegrationBase {
 
     @Test
     public void editRsvp() {
-        Rsvp testRsvp = createTestRsvp("Bobby", "yes");
+        Rsvp rsvp = createTestRsvp("Bobby", "yes");
 
         given().
                 contentType(ContentType.JSON).
                 request().body("{\"username\":\"Bobby\", \"response\":\"no\"}").
             when().
-                patch(String.format("/rsvps/%s", testRsvp.getId())).
+                patch(String.format("/rsvps/%s", rsvp.getId())).
             then().
                 statusCode(200).
                 body("response", equalTo("no")).

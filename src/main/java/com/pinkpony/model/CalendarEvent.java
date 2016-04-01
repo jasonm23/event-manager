@@ -50,8 +50,10 @@ public class CalendarEvent implements Serializable {
         this.cancelled = cancelled;
     }
 
-    public String getFormattedEventDateTime() {
-        return dateFormat.format(getCalendarEventDateTime());
+    public String getEventDateTimeAsUTCString() {
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return outputFormat.format(getCalendarEventDateTime());
     }
 
     public String getCalendarEventDateTimeString() {
@@ -108,5 +110,14 @@ public class CalendarEvent implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addRsvp(Rsvp rsvp) {
+        rsvp.calendarEvent = this;
+        rsvps.add(rsvp);
+    }
+
+    public List<Rsvp> getRsvps() {
+        return rsvps;
     }
 }

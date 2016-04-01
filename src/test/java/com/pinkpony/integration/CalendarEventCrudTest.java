@@ -1,6 +1,7 @@
 package com.pinkpony.integration;
 
 import com.jayway.restassured.http.ContentType;
+import com.pinkpony.model.CalendarEvent;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -35,14 +36,14 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
     }
 
     @Test
-    public void eventsListWithRSVPs() {
+    public void listRsvpsForAnEvent() {
         // When an event has RSVPs...
-        createTestRsvp("Billy", "yes");
-        createTestRsvp("Sarah", "yes");
-        createTestRsvp("Jo", "no");
-        createTestRsvp("Colin", "yes");
-        createTestRsvp("Trudy", "no");
-        createTestRsvp("Heng", "no");
+        createTestRsvp("yes", "Billy");
+        createTestRsvp("yes", "Sarah");
+        createTestRsvp("no", "Jo");
+        createTestRsvp("yes", "Colin");
+        createTestRsvp("no", "Trudy");
+        createTestRsvp("no", "Heng");
 
         given().
             contentType(ContentType.JSON).
@@ -64,19 +65,28 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("_embedded.rsvps[5].response", containsString("no"));
     }
 
-//   SF>: This test belongs to a future story. See #116011543
-//        This breaks current patch behaviour
-//    @Test
-//    public void editCalendarEvent() {
-//        given().
-//            contentType(ContentType.JSON).
-//            request().body("{\"name\":\"Mah CalendarEvent Name is Changed\"}").
-//        when().
-//            patch(String.format("/calendarEvents/%s", existingCalendarEvent.getId())).
-//        then().
-//            statusCode(200).
-//            body("name", equalTo("Mah CalendarEvent Name is Changed"));
-//    }
+    @Test
+    public void viewEventDetailsIncludingRsvpsViaProjection() {
+        CalendarEvent event = existingCalendarEvent;
+        event = addRsvp(event, "yes", "Ron");
+        event = addRsvp(event, "no", "Hermione");
+
+        given().
+            contentType(ContentType.JSON).
+        when().
+            get(String.format("/calendarEvents/%s?projection=inlineRsvps", event.getId())).
+        then().
+            statusCode(200).
+            body("name", equalTo("Spring Boot Night")).
+            body("description", equalTo("Wanna learn how to boot?")).
+            body("venue", equalTo("Arrowhead Lounge")).
+            body("calendarEventDateTime", equalTo(calendarEventDateString)).
+            body("username", equalTo("Holly")).
+            body("rsvps[0].username", equalTo("Ron")).
+            body("rsvps[0].response", equalTo("yes")).
+            body("rsvps[1].username", equalTo("Hermione")).
+            body("rsvps[1].response", equalTo("no"));
+    }
 
     @Test
     public void badRequestOnErrors() throws Exception {

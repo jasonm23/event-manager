@@ -5,14 +5,14 @@ import org.springframework.data.rest.core.config.Projection;
 
 import java.util.List;
 
-@Projection(name = "inlineRsvp", types = CalendarEvent.class)
+@Projection(name = "inlineRsvps", types = CalendarEvent.class)
 public interface CalendarEventProjection {
     String getName();
     String getDescription();
     String getUsername();
     String getVenue();
 
-    @Value("#{ target.getFormattedEventDateTime() }")
+    @Value("#{ target.getEventDateTimeAsUTCString() }")
     String getCalendarEventDateTime();
     Boolean getCancelled();
 
