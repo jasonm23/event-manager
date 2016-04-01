@@ -10,13 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Entity
 public class CalendarEvent implements Serializable {
 
     public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
-
+    static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
     @Id
