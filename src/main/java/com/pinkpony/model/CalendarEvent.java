@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +16,8 @@ import java.util.TimeZone;
 @Entity
 public class CalendarEvent implements Serializable {
 
-    public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ";
-    private final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
+    public final static String FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    public final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
@@ -50,10 +51,8 @@ public class CalendarEvent implements Serializable {
         this.cancelled = cancelled;
     }
 
-    public String getEventDateTimeAsUTCString() {
-        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return outputFormat.format(getCalendarEventDateTime());
+    public String getFormattedEventDateTime() {
+        return dateFormat.format(getCalendarEventDateTime());
     }
 
     public String getCalendarEventDateTimeString() {

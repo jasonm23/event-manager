@@ -20,6 +20,8 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         json.put("username", "Joe");
         json.put("venue", "Arrowhead Lounge");
 
+        String formattedDateString = dateFormat.format(dateFormat.parse(calendarEventDateString));
+
         given().
             accept("application/json").
             contentType(ContentType.JSON).
@@ -31,7 +33,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("name", equalTo("Spring Boot Night")).
             body("description", equalTo("A Big Night of CalendarEventness")).
             body("venue", equalTo("Arrowhead Lounge")).
-            body("calendarEventDateTime", equalTo(calendarEventDateString)).
+            body("calendarEventDateTime", equalTo(formattedDateString)).
             body("username", equalTo("Joe"));
     }
 
