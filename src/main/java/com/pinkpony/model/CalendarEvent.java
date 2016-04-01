@@ -125,4 +125,8 @@ public class CalendarEvent implements Serializable {
     public List<Rsvp> getRsvps() {
         return rsvps;
     }
+
+    public void cancel() {
+        this.cancelled = true;
+    }
 }

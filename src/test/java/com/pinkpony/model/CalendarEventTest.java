@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class CalendarEventTest {
 
@@ -16,5 +17,12 @@ public class CalendarEventTest {
         event.addRsvp(rsvp);
 
         assertThat(event.getRsvps(), hasItem(rsvp));
+    }
+
+    @Test
+    public void cancel() {
+        CalendarEvent event = new CalendarEvent();
+        event.cancel();
+        assertTrue(event.isCancelled());
     }
 }
