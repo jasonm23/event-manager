@@ -30,6 +30,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("name", equalTo("Spring Boot Night")).
             body("description", equalTo("A Big Night of CalendarEventness")).
             body("venue", equalTo("Arrowhead Lounge")).
+            body("calendarEventDateTime", equalTo(calendarEventDateString)).
             body("username", equalTo("Joe"));
     }
 
