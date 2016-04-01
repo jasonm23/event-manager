@@ -23,7 +23,7 @@ public class RsvpTest extends PinkPonyIntegrationBase {
     public String eventUri;
 
     CalendarEvent calendarEvent;
-    String eventDateString = "2016-04-18T14:33:00+0000";
+    String eventDateString = "2016-04-18T14:33:00+00:00";
     DateTime today = new DateTime(DateTimeZone.forID("UTC"));
 
     @Value("${local.server.port}")

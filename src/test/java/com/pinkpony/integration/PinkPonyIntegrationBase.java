@@ -40,10 +40,9 @@ abstract class PinkPonyIntegrationBase {
     @Autowired
     public MessageSource messageSource;
 
-    public static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
-    static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
+    public static DateFormat dateFormat = CalendarEvent.dateFormat;
     public CalendarEvent existingCalendarEvent;
-    public String calendarEventDateString = "2016-03-18T14:33:00+0000";
+    public String calendarEventDateString = "2016-03-18T14:33:00+00:00";
     public Date calendarEventDate;
 
     @Value("${local.server.port}")

@@ -105,7 +105,7 @@ public class CalendarEventValidatorTest {
         newEvent.setName("Spring Boot Night");
         newEvent.setDescription("Wanna learn how to boot?");
         newEvent.setVenue("Arrowhead Lounge");
-        newEvent.setCalendarEventDateTimeString("2016-03-18T14:33:00+0000");
+        newEvent.setCalendarEventDateTimeString("2016-03-18T14:33:00+00:00");
         newEvent.setUsername("Holly");
 
         return newEvent;
