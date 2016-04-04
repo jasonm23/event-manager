@@ -27,8 +27,15 @@ public class CalendarEventRepositoryRestController {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
+
     @RequestMapping(value="/calendarEvents", method = RequestMethod.POST, consumes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE, MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE})
-    public @ResponseBody ResponseEntity<ResourceSupport> createEvent(@RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<ResourceSupport> createEvent( @RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
         return calendarEventService.createEvent(calendarEvent, request);
+    }
+
+    @RequestMapping(value="/calendarEvents/{calendarEventId}", method = RequestMethod.PATCH)
+    public @ResponseBody ResponseEntity<ResourceSupport> updateEvent(@PathVariable Long calendarEventId,
+                                                                     @RequestBody Map<String, String> calendarEventMap) {
+        return calendarEventService.patchEvent(calendarEventId, calendarEventMap);
     }
 }

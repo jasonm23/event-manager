@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
 
 public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
