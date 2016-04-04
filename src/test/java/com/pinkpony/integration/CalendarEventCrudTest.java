@@ -2,9 +2,13 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.model.CalendarEvent;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.datetime.standard.DateTimeContext;
+import org.springframework.http.HttpStatus;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -117,4 +121,48 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
                 body("errors[1].invalidValue", equalTo("not a date"));
     }
+
+    @Test
+    public void updateUsernameShouldFail() throws Exception {
+
+        JSONObject params = new JSONObject();
+        params.put("username", "Joe");
+        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+            when().
+                patch(putUri).
+            then().
+                statusCode(400).
+                body("errors[0].entity", equalTo("CalendarEvent")).
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.username.field.mismatch", null, LocaleContextHolder.getLocale())));
+        ;
+
+    }
+
+    @Test
+    public void updateFieldsAfterEventStartsShouldFail() throws Exception {
+
+        JSONObject params = new JSONObject();
+        DateTime today = new DateTime(DateTimeZone.UTC);
+        existingCalendarEvent.setCalendarEventDateTime(today.minusDays(2).toDate());
+        calendarEventRepository.save(existingCalendarEvent);
+
+        params.put("name", "some other name");
+        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+            when().
+                patch(putUri).
+            then().
+                statusCode(400).
+                body("errors[0].entity", equalTo("CalendarEvent")).
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPast", null, LocaleContextHolder.getLocale())));
+    }
+
+
 }
