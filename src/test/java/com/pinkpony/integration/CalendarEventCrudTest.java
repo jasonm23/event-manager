@@ -122,47 +122,6 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body("errors[1].invalidValue", equalTo("not a date"));
     }
 
-    @Test
-    public void updateUsernameShouldFail() throws Exception {
-
-        JSONObject params = new JSONObject();
-        params.put("username", "Joe");
-        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
-
-        given().
-                contentType(ContentType.JSON).
-                body(params.toString()).
-            when().
-                patch(putUri).
-            then().
-                statusCode(400).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.username.field.mismatch", null, LocaleContextHolder.getLocale())));
-        ;
-
-    }
-
-    @Test
-    public void updateFieldsAfterEventStartsShouldFail() throws Exception {
-
-        JSONObject params = new JSONObject();
-        DateTime today = new DateTime(DateTimeZone.UTC);
-        existingCalendarEvent.setCalendarEventDateTime(today.minusDays(2).toDate());
-        calendarEventRepository.save(existingCalendarEvent);
-
-        params.put("name", "some other name");
-        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
-
-        given().
-                contentType(ContentType.JSON).
-                body(params.toString()).
-            when().
-                patch(putUri).
-            then().
-                statusCode(400).
-                body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPast", null, LocaleContextHolder.getLocale())));
-    }
 
 
 }

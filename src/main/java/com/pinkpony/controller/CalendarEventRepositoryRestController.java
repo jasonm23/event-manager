@@ -29,7 +29,7 @@ public class CalendarEventRepositoryRestController {
 
 
     @RequestMapping(value="/calendarEvents", method = RequestMethod.POST, consumes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE, MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE})
-    public @ResponseBody ResponseEntity<ResourceSupport> createEvent(@RequestHeader() String name, @RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<ResourceSupport> createEvent( @RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
         return calendarEventService.createEvent(calendarEvent, request);
     }
 
