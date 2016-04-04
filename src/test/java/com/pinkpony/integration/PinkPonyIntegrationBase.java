@@ -9,6 +9,7 @@ import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.time.format.DateTimeFormatter.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -53,6 +55,9 @@ abstract class PinkPonyIntegrationBase {
         RestAssured.port = port;
         rsvpRepository.deleteAll();
         calendarEventRepository.deleteAll();
+
+        RestAssured.port = port;
+//        DateTimeFormatter.ofPattern(CalendarEvent.FORMAT_STRING);
         calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
         calendarEventDateString = dateFormat.format(calendarEventDate);
         existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
@@ -63,10 +68,22 @@ abstract class PinkPonyIntegrationBase {
         newCalendarEvent.setName("Spring Boot Night");
         newCalendarEvent.setDescription("Wanna learn how to boot?");
         newCalendarEvent.setVenue("Arrowhead Lounge");
-        newCalendarEvent.setUsername("Holly");
-
         newCalendarEvent.setCalendarEventDateTime(date);
-        newCalendarEvent.setCalendarEventDateTimeString(toUTCString(date));
+        newCalendarEvent.setCalendarEventDateTimeString(dateFormat.format(date));
+        newCalendarEvent.setUsername("Holly");
+        return newCalendarEvent;
+    }
+
+    public CalendarEvent makePastCalendarEvent() {
+        String dateString = dateFormat.format(new DateTime(DateTimeZone.forID("UTC")).minusDays(2).toDate());
+        Date eventDate = (new DateTime(DateTimeZone.forID("UTC")).minusDays(2).toDate());
+        CalendarEvent newCalendarEvent = new CalendarEvent();
+        newCalendarEvent.setName("Spring Boot Night");
+        newCalendarEvent.setDescription("Wanna learn how to boot?");
+        newCalendarEvent.setVenue("Arrowhead Lounge");
+        newCalendarEvent.setCalendarEventDateTime(eventDate);
+        newCalendarEvent.setCalendarEventDateTimeString(dateString);
+        newCalendarEvent.setUsername("Holly");
 
         return newCalendarEvent;
     }
