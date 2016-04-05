@@ -13,7 +13,7 @@ public class RsvpCreateValidator extends RsvpBaseValidator {
     @Override
     public void validate(Object object, Errors errors) {
         commonValidate(object, errors);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "calendarEvent", "rsvp.calendarEvent.field.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "calendarEvent", "rsvp.calendarEvent.field.invalidValue");
 
         Rsvp rsvp = (Rsvp) object;
         CalendarEvent calendarEvent = rsvp.calendarEvent;

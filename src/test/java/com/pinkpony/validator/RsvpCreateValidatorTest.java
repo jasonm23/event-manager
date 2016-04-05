@@ -29,7 +29,7 @@ public class RsvpCreateValidatorTest {
         validator.validate(rsvp, errors);
 
         assertTrue(errors.getErrorCount() > 0);
-        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.empty"));
+        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.invalidValue"));
     }
 
     @Test
