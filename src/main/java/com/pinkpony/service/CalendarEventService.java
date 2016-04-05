@@ -5,12 +5,14 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.CalendarEventMessageProjection;
 import com.pinkpony.model.CalendarEventProjection;
 import com.pinkpony.repository.CalendarEventRepository;
+import com.pinkpony.util.GenericMerge;
 import com.pinkpony.validator.CalendarEventValidator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.data.rest.webmvc.ControllerUtils;
 import org.springframework.data.rest.webmvc.support.RepositoryConstraintViolationExceptionMessage;
@@ -30,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CalendarEventService {
@@ -71,8 +74,9 @@ public class CalendarEventService {
     }
 
     public  ResponseEntity<ResourceSupport> createEvent(CalendarEvent calendarEvent, HttpServletRequest request) {
-        ResponseEntity<ResourceSupport> errorResource = ensureValidity(calendarEvent);
-        if (errorResource != null) return errorResource;
+        Optional<ResponseEntity<ResourceSupport>> optionalErrorResource = ensureValidity(calendarEvent);
+
+        if (optionalErrorResource.isPresent()) return optionalErrorResource.get();
 
         CalendarEvent savedEvent = calendarEventRepository.save(calendarEvent);
 
@@ -93,7 +97,7 @@ public class CalendarEventService {
         return request.getHeader("Accept").equals(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE);
     }
 
-    private ResponseEntity<ResourceSupport> ensureValidity(CalendarEvent calendarEvent) {
+    public Optional<ResponseEntity<ResourceSupport>> ensureValidity(CalendarEvent calendarEvent) {
         CalendarEventValidator validator = new CalendarEventValidator();
         BindingResult result = new BeanPropertyBindingResult(calendarEvent, "CalendarEvent");
         validator.validate(calendarEvent, result);
@@ -101,51 +105,44 @@ public class CalendarEventService {
         if (result.hasErrors()){
             RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
             Resource<?> errorResource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource);
+            return Optional.of(ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource));
         }
-        return null;
+        return Optional.empty();
     }
 
     public ResponseEntity<ResourceSupport> patchEvent(Long calendarEventId, Map<String, String> calendarEventMap) {
 
-        CalendarEvent originalCalendarEvent = mergeCalendarEvent(calendarEventId, calendarEventMap);
+        String eventOwner = calendarEventMap.get("username");
 
-        //Perform validation first
-        CalendarEventValidator validator = new CalendarEventValidator();
-        BindingResult result = new BeanPropertyBindingResult(originalCalendarEvent, "CalendarEvent");
-        validator.validate(originalCalendarEvent, result);
+        //We don't merge the "username" field on PATCH, because we don't allow changes to it
+        calendarEventMap.remove("username");
 
-        if (result.hasErrors()){
-            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(result), new MessageSourceAccessor(messageSource));
-            Resource<?> errorResource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), errorResource);
+        //Optional<CalendarEvent> optionalCalendarEvent = mergeCalendarEvent(calendarEventId, calendarEventMap);
+        GenericMerge<CalendarEvent> genericMerge = new GenericMerge<>(calendarEventRepository);
+        Optional<CalendarEvent> optionalCalendarEvent = genericMerge.mergeObject(calendarEventId,calendarEventMap);
+
+        //break out if we can't find the calendar Event
+        if(! optionalCalendarEvent.isPresent()) {
+            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null );
+        }
+        CalendarEvent originalCalendarEvent = optionalCalendarEvent.get();
+
+
+        //if validation fails we exit early
+        Optional<ResponseEntity<ResourceSupport>> validationResult = ensureValidity(originalCalendarEvent);
+        if (validationResult.isPresent()){
+            return validationResult.get();
         }
 
         //check if event is being updated after it has already started
-
-        if( originalCalendarEvent == null ) {
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null );
-        }
-
         Date timeNow = new DateTime().toDate();
         if ( timeNow.compareTo(originalCalendarEvent.getCalendarEventDateTime()) > 0 ) {
-            BindingResult binder = new MapBindingResult(calendarEventMap, "CalendarEvent");
-            binder.rejectValue("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.inPast");
-
-            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
-            Resource<?> resource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
+            return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.inPast",calendarEventMap);
         }
 
-        if (calendarEventMap.get("username") != null && ! originalCalendarEvent.getUsername().equals(calendarEventMap.get("username"))){
-
-            calendarEventMap.put("username", originalCalendarEvent.getUsername());
-            BindingResult binder = new MapBindingResult(calendarEventMap, "CalendarEvent");
-            binder.rejectValue("username", "calendarEvent.username.field.mismatch");
-
-            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
-            Resource<?> resource = new Resource<>(message);
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
+        //check if event is being updated by someone other than event owner
+        if (eventOwner != null && ! originalCalendarEvent.getUsername().equals(eventOwner)){
+            return validateConstraint("username", "calendarEvent.username.field.mismatch", calendarEventMap);
         }
 
         Resource<?> originalResource = new Resource<>(originalCalendarEvent);
@@ -153,34 +150,13 @@ public class CalendarEventService {
 
     }
 
-    private CalendarEvent mergeCalendarEvent(Long calendarEventId, Map<String, String> calendarEventMap) {
-        CalendarEvent originalCalendarEvent = calendarEventRepository.findOne(calendarEventId);
+    private ResponseEntity<ResourceSupport> validateConstraint(String fieldName, String i18nMessage, Map<String, String> calendarEventMap) {
+        BindingResult binder = new MapBindingResult(calendarEventMap, "CalendarEvent");
+        binder.rejectValue(fieldName, i18nMessage);
 
-        for(String key: calendarEventMap.keySet()){
-            try {
-                if(! key.equals("username")) {
-                    //generate setter method from key name
-                    String methodName = "set" + StringUtils.capitalize(key);
-
-                    String value = calendarEventMap.get(key);
-
-                    Method method = originalCalendarEvent.getClass().getMethod(methodName, String.class);
-                    //apply the setter method with the value of *this* key
-
-                    method.invoke(originalCalendarEvent, value);
-                    //originalCalendarEvent.applyMethod("setterMethod", value);
-
-                }
-            }catch(NoSuchMethodException nsme){
-               nsme.printStackTrace();
-            }catch(IllegalArgumentException iae){
-               iae.printStackTrace();
-            }catch(InvocationTargetException ite){
-                ite.printStackTrace();
-            }catch(IllegalAccessException iae){
-                iae.printStackTrace();
-            }
-        }
-        return originalCalendarEvent;
+        RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
+        Resource<?> resource = new Resource<>(message);
+        return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
     }
+
 }
