@@ -151,18 +151,31 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         calendarEventRepository.save(existingCalEvent);
 
         params.put("name", "some other name");
-        String putUri = String.format("/calendarEvents/%d", existingCalEvent.getId());
+        String patchUri = String.format("/calendarEvents/%d", existingCalEvent.getId());
 
         given().
                 contentType(ContentType.JSON).
                 body(params.toString()).
             when().
-                patch(putUri).
+                patch(patchUri).
             then().
                 statusCode(400).
                 body("errors[0].entity", equalTo("CalendarEvent")).
                 body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPast", null, LocaleContextHolder.getLocale())));
     }
 
+    @Test
+    public void disallowPUTMethodForUpdateEvent() {
 
+        JSONObject params = new JSONObject();
+        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+            when().
+                put(putUri).
+            then().
+                statusCode(405);
+    }
 }
