@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CalendarEventServiceTest {
+public class CalendarEventCancelServiceTest {
 
     @Mock
     CalendarEventRepository eventRepository;
@@ -101,5 +101,10 @@ public class CalendarEventServiceTest {
         ResponseEntity response = eventService.cancelEvent(100L, eventData);
 
         assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+    }
+
+    @Test
+    public void patchEventWithNonExistingEvent() {
+
     }
 }

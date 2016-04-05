@@ -75,17 +75,7 @@ abstract class PinkPonyIntegrationBase {
     }
 
     public CalendarEvent makePastCalendarEvent() {
-        String dateString = dateFormat.format(new DateTime(DateTimeZone.forID("UTC")).minusDays(2).toDate());
-        Date eventDate = (new DateTime(DateTimeZone.forID("UTC")).minusDays(2).toDate());
-        CalendarEvent newCalendarEvent = new CalendarEvent();
-        newCalendarEvent.setName("Spring Boot Night");
-        newCalendarEvent.setDescription("Wanna learn how to boot?");
-        newCalendarEvent.setVenue("Arrowhead Lounge");
-        newCalendarEvent.setCalendarEventDateTime(eventDate);
-        newCalendarEvent.setCalendarEventDateTimeString(dateString);
-        newCalendarEvent.setUsername("Holly");
-
-        return newCalendarEvent;
+        return makeCalendarEvent(new DateTime(DateTimeZone.forID("UTC")).minusDays(2).toDate());
     }
 
     public CalendarEvent addRsvp(CalendarEvent event, String response, String username) {

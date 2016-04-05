@@ -5,8 +5,11 @@ import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.service.CalendarEventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ControllerUtils;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.MessageCodesResolver;
@@ -37,5 +40,10 @@ public class CalendarEventRepositoryRestController {
     public @ResponseBody ResponseEntity<ResourceSupport> updateEvent(@PathVariable Long calendarEventId,
                                                                      @RequestBody Map<String, String> calendarEventMap) {
         return calendarEventService.patchEvent(calendarEventId, calendarEventMap);
+    }
+
+    @RequestMapping(value="/calendarEvents/{calendarEventId}", method = RequestMethod.PUT)
+    public @ResponseBody ResponseEntity<ResourceSupport> updateEvent(@PathVariable Long calendarEventId) {
+        return ControllerUtils.toResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, new HttpHeaders(), null);
     }
 }
