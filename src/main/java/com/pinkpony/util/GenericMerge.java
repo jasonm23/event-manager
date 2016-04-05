@@ -12,7 +12,7 @@ public class GenericMerge<T> {
 
     private final CrudRepository<T, Long> repository;
 
-    public GenericMerge(CrudRepository repo){
+    public GenericMerge(CrudRepository<T, Long> repo){
         this.repository = repo;
     }
 
