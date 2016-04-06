@@ -5,31 +5,18 @@ import com.pinkpony.model.Rsvp;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.format.datetime.standard.DateTimeContext;
 import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Validator;
 
 import static org.hamcrest.Matchers.hasItemInArray;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-public class RsvpCreateValidatorTest {
-    RsvpCreateValidator validator;
+public class RsvpUpdateValidatorTest {
+    RsvpUpdateValidator validator;
 
     @Before
     public void setUp() {
-        validator = new RsvpCreateValidator();
-    }
-
-    @Test
-    public void validateBlankCalendarEvent() {
-
-        Rsvp rsvp = makeRsvp("username", "yes", null);
-
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
-        validator.validate(rsvp, errors);
-
-        assertTrue(errors.getErrorCount() > 0);
-        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.invalidValue"));
+        validator = new RsvpUpdateValidator();
     }
 
     @Test
@@ -41,10 +28,10 @@ public class RsvpCreateValidatorTest {
         Rsvp rsvp = makeRsvp("username", "yes", calendarEvent);
 
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
-        validator.validate((Object)rsvp, errors);
+        validator.validate(rsvp, errors);
 
         assertTrue(errors.getErrorCount() > 0);
-        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.createInThePast"));
+        assertThat(errors.getFieldError("calendarEvent").getCodes(), hasItemInArray("rsvp.calendarEvent.field.updateInThePast"));
     }
 
     private Rsvp makeRsvp(String username, String response, CalendarEvent calendarEvent) {
