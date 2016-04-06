@@ -10,7 +10,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import java.util.Date;
 import java.util.List;
 
-@RepositoryRestResource(excerptProjection = CalendarEventProjection.class)
+@RepositoryRestResource
 public interface CalendarEventRepository extends PagingAndSortingRepository<CalendarEvent, Long> {
     List<CalendarEvent> findByCalendarEventDateTimeAfter(Date date);
 
