@@ -10,7 +10,6 @@ import javax.persistence.*;
 public class Rsvp {
     @ManyToOne
     @JoinColumn(name = "calendar_event_id")
-    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="name")
     public CalendarEvent calendarEvent;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
