@@ -30,7 +30,20 @@ public class RsvpBaseValidatorTest {
     }
 
     @Test
-    public void validateResponse() throws Exception {
+    public void validateMissingResponse() throws Exception {
+        Rsvp rsvp = new Rsvp();
+        rsvp.setUsername("Hermione");
+
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
+        validator.validate(rsvp, errors);
+
+        assertTrue(errors.getErrorCount() > 0);
+        assertNull(errors.getFieldError("username"));
+        assertThat(errors.getFieldError("response").getCodes(), hasItemInArray("rsvp.response.field.empty"));
+    }
+
+    @Test
+    public void validateInvalidResponse() throws Exception {
         Rsvp rsvp = makeRsvp("Hermione", "invalid");
 
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(rsvp, "Rsvp");
