@@ -25,5 +25,5 @@ public interface CalendarEventMessageProjection {
     @JsonProperty("message_type")
     String getMessageType();
 
-    List<RsvpProjection> getRsvps();
+    List<RsvpMessageProjection> getRsvps();
 }
