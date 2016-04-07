@@ -1,11 +1,16 @@
 package com.pinkpony.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 
 @Entity
 public class Rsvp {
     @ManyToOne
     @JoinColumn(name = "calendar_event_id")
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="name")
     public CalendarEvent calendarEvent;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

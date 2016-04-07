@@ -2,6 +2,7 @@ package com.pinkpony.integration;
 
 import com.jayway.restassured.http.ContentType;
 import com.pinkpony.config.MarvinMediaTypes;
+import com.pinkpony.model.Rsvp;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
 
     @Test
     public void calendarEventMessageProjection() throws JSONException {
+        String messageString = String.format("# Bob's Blowout\\\\n\\\\n*Big party for Uncle Bob*\\\\nAt %s\\\\n\\\\n## Attendees:\\\\n{rsvps:\\\\n}", calendarEventDateString);
+
         JSONObject json = new JSONObject();
         json.put("name","Bob's Blowout");
         json.put("description","Big party for Uncle Bob");
@@ -30,7 +33,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 post("/calendarEvents?projection=eventMessage").
         then().
                 statusCode(201).
-                body("message", equalTo("event Bob's Blowout created")).
+                body("message", equalTo(messageString)).
                 body("message_type", equalTo("channel"));
     }
 
@@ -90,6 +93,7 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
         json.put("description", "A Big Night of CalendarEventness");
         json.put("username", "Joe");
         json.put("venue", "Arrowhead Lounge");
+        String messageString = String.format("# Spring Boot Night\\\\n\\\\n*A Big Night of CalendarEventness*\\\\nAt %s\\\\n\\\\n## Attendees:\\\\n{rsvps:\\\\n}", calendarEventDateString);
 
         given().
                 accept(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE).
@@ -104,7 +108,27 @@ public class CalendarEventMessageTest extends PinkPonyIntegrationBase {
                 body("venue", equalTo("Arrowhead Lounge")).
                 body("calendarEventDateTime", equalTo(calendarEventDateString)).
                 body("username", equalTo("Joe")).
-                body("message", equalTo("event "+ json.get("name")+" created")).
+                body("message", equalTo(messageString)).
                 body("message_type", equalTo("channel"));
+    }
+
+    // TODO: do the same for get event
+    @Test
+    public void getCalendarEventWithRsvpWithMarvinAcceptHeader() {
+        String messageString = String.format("# Spring Boot Night\\\\n\\\\n*Wanna learn how to boot?*\\\\nAt %s\\\\n\\\\n## Attendees:\\\\n{rsvps:\\\\n}", calendarEventDateString);
+
+        existingCalendarEvent = addRsvp(existingCalendarEvent, "yes", "Yifeng");
+
+        given().
+                accept(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE).
+                contentType(ContentType.JSON).
+                when().
+                get(String.format("/calendarEvents/%d", existingCalendarEvent.getId())).
+                then().
+                statusCode(200).
+                body("message", equalTo(messageString)).
+                body("message_type", equalTo("channel")).
+                body("rsvps", hasSize(1)).
+                body("rsvps[0].message", equalTo("Yifeng, yes"));
     }
 }
