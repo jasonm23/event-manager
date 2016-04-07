@@ -64,8 +64,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
             when().
                 patch(cancelUri).
             then().
-                statusCode(400).
-                body("cancelled", equalTo(false));
+                statusCode(400);
     }
 
     @Test
@@ -78,9 +77,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
                 when().
                 patch(cancelUri).
                 then().
-                statusCode(403).
-                body("cancelled", equalTo(false)).
-                body("username", equalTo("Joe"));
+                statusCode(403);
 
     }
 
@@ -109,7 +106,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
 
     @Test
     public void cancelNonExistingEvent() {
-        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, 200L);
+        cancelUri = String.format("http://localhost:%d/calendarEvents/%d/cancel", port, -1L);
         String jsonInput = "{\"username\":\"Joe\"}";
 
         given().

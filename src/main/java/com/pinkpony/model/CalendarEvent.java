@@ -131,4 +131,8 @@ public class CalendarEvent implements Serializable {
     public void cancel() {
         this.cancelled = true;
     }
+
+    public Boolean hasUsername(String username) {
+        return this.getUsername().equals(username);
+    }
 }
