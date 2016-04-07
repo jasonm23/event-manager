@@ -12,6 +12,7 @@ public interface CalendarEventMessageProjection {
     String getDescription();
     String getUsername();
     String getVenue();
+    Boolean getCancelled();
 
     @JsonProperty("calendarEventDateTime")
     String getCalendarEventDateTimeString();

@@ -23,7 +23,6 @@ public class CalendarEvent implements Serializable {
     public final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
 
-    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
