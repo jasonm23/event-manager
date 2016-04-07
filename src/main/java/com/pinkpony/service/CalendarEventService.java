@@ -155,4 +155,21 @@ public class CalendarEventService {
         return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
     }
 
+    public ResponseEntity<ResourceSupport> showEvent(Long calendarEventId, HttpServletRequest request) {
+        CalendarEvent calendarEvent = calendarEventRepository.findOne(calendarEventId);
+
+        if (null == calendarEvent)
+            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null);
+
+        Resource<?> calendarEventResource;
+        if(isMarvinRequest(request)){
+            CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
+            calendarEventResource = new Resource<>(calendarEventMessageProjection);
+        } else {
+            //wrap our projection in a HateOS resource for response
+            CalendarEventProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventProjection.class, calendarEvent);
+            calendarEventResource = new Resource<>(calendarEventProjection);
+        }
+        return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), calendarEventResource);
+    }
 }

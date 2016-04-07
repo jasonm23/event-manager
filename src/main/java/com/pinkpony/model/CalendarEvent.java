@@ -1,7 +1,9 @@
 package com.pinkpony.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,6 +23,7 @@ public class CalendarEvent implements Serializable {
     public final static DateFormat dateFormat = new SimpleDateFormat(CalendarEvent.FORMAT_STRING);
     static { dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); }
 
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
     @OneToMany(mappedBy = "calendarEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
@@ -128,5 +131,9 @@ public class CalendarEvent implements Serializable {
 
     public void cancel() {
         this.cancelled = true;
+    }
+
+    public String getMessage() {
+        return String.format("# %s\\\\n\\\\n*%s*\\\\nAt %s\\\\n\\\\n## Attendees:\\\\n{rsvps:\\\\n}", this.getName(), this.getDescription(), this.getCalendarEventDateTimeString());
     }
 }

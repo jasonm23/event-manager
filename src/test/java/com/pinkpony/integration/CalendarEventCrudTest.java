@@ -38,7 +38,28 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("description", equalTo("A Big Night of CalendarEventness")).
             body("venue", equalTo("Arrowhead Lounge")).
             body("calendarEventDateTime", equalTo(formattedDateString)).
-            body("username", equalTo("Joe"));
+            body("username", equalTo("Joe")).
+            body(not(hasItem("message"))).
+            body(not(hasItem("message_type")));
+    }
+
+    @Test
+    public void getCalendarEvent() {
+
+        given().
+            accept("application/json").
+            contentType(ContentType.JSON).
+        when().
+            get(String.format("/calendarEvents/%d", existingCalendarEvent.getId())).
+        then().
+            statusCode(200).
+            body("name", equalTo(existingCalendarEvent.getName())).
+            body("description", equalTo(existingCalendarEvent.getDescription())).
+            body("venue", equalTo(existingCalendarEvent.getVenue())).
+            body("username", equalTo(existingCalendarEvent.getUsername())).
+            body("calendarEventDateTime", equalTo(existingCalendarEvent.getCalendarEventDateTimeString())).
+            body(not(hasItem("message"))).
+            body(not(hasItem("message_type")));
     }
 
     @Test
