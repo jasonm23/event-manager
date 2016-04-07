@@ -4,6 +4,9 @@ import com.pinkpony.model.Rsvp;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import java.util.Arrays;
+
 public class RsvpBaseValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
@@ -20,8 +23,13 @@ public class RsvpBaseValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "response", "rsvp.response.field.empty");
 
         Rsvp rsvp = (Rsvp) object;
-        if (! (rsvp.getResponse().equals("yes") || rsvp.getResponse().equals("no"))) {
+        if (rsvp.getResponse() != null && ! responseIsValid(rsvp)) {
             errors.rejectValue("response", "rsvp.response.field.invalidValue");
         }
+    }
+
+    private boolean responseIsValid(Rsvp rsvp) {
+        String response = rsvp.getResponse();
+        return response.equals("yes") || response.equals("no");
     }
 }
