@@ -12,8 +12,9 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/",
       "method": "POST",
-      "defaultResponseSuccess": "Event created successfully",
-      "defaultResponseFailure": "Event create failed: EVERYTHING IS HORRIBLE!!!!"
+      "defaultResponseSuccess": "# {name}\\n\\n*{description}*\\nAt {calendarEventDateTime}\\n\\n## Attendees:\\n{rsvps:\\n}",
+      "defaultResponseSuccessType": "channel",
+      "defaultResponseFailure": "Event create failed: *EVERYTHING IS HORRIBLE!!!!*\\n{errors:\\n}"
     },
     {
       "name": "rsvp",
@@ -23,8 +24,8 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/rsvps",
       "method": "POST",
-      "defaultResponseSuccess": "You have RSVP`d",
-      "defaultResponseFailure": "RSVP create failed: EVERYTHING IS HORRIBLE!!!!"
+      "defaultResponseSuccess": "# You have RSVP`d {response}",
+      "defaultResponseFailure": "RSVP create failed: *EVERYTHING IS HORRIBLE!!!!*\\n{errors:\\n}"
     }
   ]
 }
