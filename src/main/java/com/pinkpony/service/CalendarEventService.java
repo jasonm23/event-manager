@@ -104,6 +104,12 @@ public class CalendarEventService {
         //We don't merge the "username" field on PATCH, because we don't allow changes to it
         calendarEventMap.remove("username");
 
+        // if there is a calendarEventDateTime, move it to the calendarEventDateTimeString key
+        if (null != calendarEventMap.get("calendarEventDateTime") ) {
+            calendarEventMap.put("calendarEventDateTimeString", calendarEventMap.get("calendarEventDateTime"));
+            calendarEventMap.remove("calendarEventDateTime");
+        }
+
         //Optional<CalendarEvent> optionalCalendarEvent = mergeCalendarEvent(calendarEventId, calendarEventMap);
         GenericMerge<CalendarEvent> genericMerge = new GenericMerge<>(calendarEventRepository);
         Optional<CalendarEvent> optionalCalendarEvent = genericMerge.mergeObject(calendarEventId,calendarEventMap);
@@ -123,6 +129,7 @@ public class CalendarEventService {
 
         //check if event is being updated after it has already started
         Date timeNow = new DateTime().toDate();
+        // TODO this is wrong: its checking the updated value, not the original
         if ( timeNow.compareTo(originalCalendarEvent.getCalendarEventDateTime()) > 0 ) {
             return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.inPast",calendarEventMap);
         }

@@ -9,7 +9,6 @@ import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.repository.RsvpRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.time.format.DateTimeFormatter.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PinkPonyApplication.class)
@@ -43,7 +41,7 @@ abstract class PinkPonyIntegrationBase {
     public MessageSource messageSource;
 
     public static DateFormat dateFormat = CalendarEvent.dateFormat;
-    public CalendarEvent existingCalendarEvent;
+    public CalendarEvent existingCalendarEventInFuture;
     public String calendarEventDateString;
     public Date calendarEventDate;
 
@@ -60,7 +58,7 @@ abstract class PinkPonyIntegrationBase {
 //        DateTimeFormatter.ofPattern(CalendarEvent.FORMAT_STRING);
         calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
         calendarEventDateString = dateFormat.format(calendarEventDate);
-        existingCalendarEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
+        existingCalendarEventInFuture = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
     }
 
     public CalendarEvent makeCalendarEvent(Date date) {
@@ -90,7 +88,7 @@ abstract class PinkPonyIntegrationBase {
         Rsvp rsvp = new Rsvp();
         rsvp.setUsername(username);
         rsvp.setResponse(response);
-        rsvp.calendarEvent = existingCalendarEvent;
+        rsvp.calendarEvent = existingCalendarEventInFuture;
         return rsvpRepository.save(rsvp);
     }
 
