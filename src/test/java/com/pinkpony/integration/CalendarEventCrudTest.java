@@ -180,7 +180,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             then().
                 statusCode(400).
                 body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPast", null, LocaleContextHolder.getLocale())));
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.eventHasAlreadyStarted", null, LocaleContextHolder.getLocale())));
     }
 
     @Test
@@ -210,11 +210,11 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         given().
                 contentType(ContentType.JSON).
                 body(params.toString()).
-                when().
+            when().
                 patch(patchUri).
-                then().
+            then().
                 statusCode(400).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPastInvalid", null, LocaleContextHolder.getLocale())));
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.cantSetDateInPast", null, LocaleContextHolder.getLocale())));
 
     }
 

@@ -101,6 +101,11 @@ public class CalendarEventService {
 
         String eventOwner = calendarEventMap.get("username");
 
+
+        //TODO: Refactor this so we only do one DB query for findOne() in this workflow.
+        CalendarEvent currentEvent = calendarEventRepository.findOne(calendarEventId);
+        Date savedDate = currentEvent.getCalendarEventDateTime();
+
         //We don't merge the "username" field on PATCH, because we don't allow changes to it
         calendarEventMap.remove("username");
 
@@ -118,28 +123,37 @@ public class CalendarEventService {
         if(! optionalCalendarEvent.isPresent()) {
             return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null );
         }
-        CalendarEvent originalCalendarEvent = optionalCalendarEvent.get();
+        CalendarEvent updatedCalendarEvent = optionalCalendarEvent.get();
 
 
         //if validation fails we exit early
-        Optional<ResponseEntity<ResourceSupport>> validationResult = ensureValidity(originalCalendarEvent);
+        Optional<ResponseEntity<ResourceSupport>> validationResult = ensureValidity(updatedCalendarEvent);
         if (validationResult.isPresent()){
             return validationResult.get();
         }
 
         //check if event is being updated after it has already started
+        // event is in the future, but we want to patch to update to the past
         Date timeNow = new DateTime().toDate();
-        // TODO this is wrong: its checking the updated value, not the original
-        if ( timeNow.compareTo(originalCalendarEvent.getCalendarEventDateTime()) > 0 ) {
-            return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.inPast",calendarEventMap);
+
+        //check whether we are actually updating the Event Date, and IF SO, check that such update is not occuring in the past
+        if ( null != calendarEventMap.get("calendarEventDateTimeString") && timeNow.compareTo(updatedCalendarEvent.getCalendarEventDateTime()) > 0 ) {
+            return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.cantSetDateInPast",calendarEventMap);
+        }
+
+        // event is in the past, we don't allow updates
+        //We are just checking whether non-date-related-updates are actually allowed. I.e. check if event has expired.
+        if ( timeNow.compareTo(savedDate) > 0 ) {
+            return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.eventHasAlreadyStarted",calendarEventMap);
         }
 
         //check if event is being updated by someone other than event owner
-        if (eventOwner != null && ! originalCalendarEvent.getUsername().equals(eventOwner)){
+        if (eventOwner != null && ! updatedCalendarEvent.getUsername().equals(eventOwner)){
             return validateConstraint("username", "calendarEvent.username.field.mismatch", calendarEventMap);
         }
 
-        Resource<?> originalResource = new Resource<>(originalCalendarEvent);
+        calendarEventRepository.save(updatedCalendarEvent);
+        Resource<?> originalResource = new Resource<>(updatedCalendarEvent);
         return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), originalResource);
 
     }

@@ -76,6 +76,7 @@ public class CalendarEventPatchServiceTest {
         eventData.put("name", "new name");
         Date yesterday = new DateTime().minusDays(1).toDate();
         event.setCalendarEventDateTimeString(CalendarEvent.dateFormat.format(yesterday));
+        event.setCalendarEventDateTime(yesterday);
 
         ResponseEntity<ResourceSupport> response = eventService.patchEvent(event.getId(), eventData);
 
