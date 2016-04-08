@@ -32,7 +32,7 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
         existingCalendarEventInFuture.setUsername("Joe");
         calendarEventRepository.save(existingCalendarEventInFuture);
 
-        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, existingCalendarEventInFuture.getId());
+        cancelUri = String.format("http://localhost:%d/calendarEvents/%d/cancel", port, existingCalendarEventInFuture.getId());
     }
 
     @After
