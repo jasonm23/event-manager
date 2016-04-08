@@ -131,8 +131,4 @@ public class CalendarEvent implements Serializable {
     public void cancel() {
         this.cancelled = true;
     }
-
-    public String getMessage() {
-        return String.format("# %s\\\\n\\\\n*%s*\\\\nAt %s\\\\n\\\\n## Attendees:\\\\n{rsvps:\\\\n}", this.getName(), this.getDescription(), this.getCalendarEventDateTimeString());
-    }
 }
