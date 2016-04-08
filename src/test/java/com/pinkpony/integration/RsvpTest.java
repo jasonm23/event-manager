@@ -82,6 +82,27 @@ public class RsvpTest extends PinkPonyIntegrationBase {
     }
 
     @Test
+    public void rsvpWithNullResponse() throws Exception {
+        String eventUri = String.format("http://localhost:%s/events/%s", port, calendarEvent.getId());
+        JSONObject json = new JSONObject();
+        json.put("username", "gabe");
+        json.put("calendarEvent", eventUri);
+
+        given().
+                contentType(ContentType.JSON).
+                body(json.toString()).
+                when().
+                post("/rsvps").
+                then().
+                statusCode(400).
+                body("errors", hasSize(1)).
+                body("errors[0].entity", equalTo("Rsvp")).
+                body("errors[0].message", equalTo(messageSource.getMessage("rsvp.response.field.empty", null, LocaleContextHolder.getLocale()))).
+                body("errors[0].property", equalTo("response")).
+                body("errors[0].invalidValue", equalTo("null"));
+    }
+
+    @Test
     public void rsvpWithEmptyFields() throws Exception {
         JSONObject json = new JSONObject();
         json.put("username", "");
