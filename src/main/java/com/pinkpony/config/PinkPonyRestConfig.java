@@ -1,5 +1,6 @@
 package com.pinkpony.config;
 
+import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.validator.CalendarEventValidator;
 import com.pinkpony.validator.RsvpCreateValidator;
 import com.pinkpony.validator.RsvpUpdateValidator;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 import org.springframework.http.MediaType;
@@ -66,5 +68,10 @@ public class PinkPonyRestConfig extends RepositoryRestConfigurerAdapter {
         validatingListener.addValidator("beforeCreate", calendarEventValidator);
     }
 
+    @Override
+    public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+        super.configureRepositoryRestConfiguration(config);
 
+        config.exposeIdsFor(CalendarEvent.class);
+    }
 }

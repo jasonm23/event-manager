@@ -112,29 +112,29 @@ public class CalendarEventService {
         if(! optionalCalendarEvent.isPresent()) {
             return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null );
         }
-        CalendarEvent originalCalendarEvent = optionalCalendarEvent.get();
+        CalendarEvent updatedEvent = optionalCalendarEvent.get();
 
 
         //if validation fails we exit early
-        Optional<ResponseEntity<ResourceSupport>> validationResult = ensureValidity(originalCalendarEvent);
+        Optional<ResponseEntity<ResourceSupport>> validationResult = ensureValidity(updatedEvent);
         if (validationResult.isPresent()){
             return validationResult.get();
         }
 
         //check if event is being updated after it has already started
         Date timeNow = new DateTime().toDate();
-        if ( timeNow.compareTo(originalCalendarEvent.getCalendarEventDateTime()) > 0 ) {
+        if ( timeNow.compareTo(updatedEvent.getCalendarEventDateTime()) > 0 ) {
             return validateConstraint("calendarEventDateTime", "calendarEvent.calendarEventDateTime.field.inPast",calendarEventMap);
         }
 
         //check if event is being updated by someone other than event owner
-        if (eventOwner != null && ! originalCalendarEvent.getUsername().equals(eventOwner)){
+        if (eventOwner != null && ! updatedEvent.getUsername().equals(eventOwner)){
             return validateConstraint("username", "calendarEvent.username.field.mismatch", calendarEventMap);
         }
 
 
-        Resource<?> originalResource = new Resource<>(originalCalendarEvent);
-        return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), originalResource);
+        Resource<?> updatedResource = new Resource<>(updatedEvent);
+        return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), updatedResource);
 
     }
 
