@@ -230,11 +230,31 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         given().
                 contentType(ContentType.JSON).
                 body(params.toString()).
-            when().
+                when().
                 patch(patchUri).
-            then().
+                then().
                 statusCode(200).
                 body("calendarEventDateTime", equalTo(newDateTimeString));
+    }
 
+    @Test
+    public void updatingEventAttributeDescribesSuccess() throws Exception {
+        JSONObject params = new JSONObject();
+        params.put("username", existingCalendarEventInFuture.getUsername());
+        params.put("name", "New Event Name");
+        String uri = String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId());
+
+        given().
+            contentType(ContentType.JSON).
+            body(params.toString()).
+        when().
+            patch(uri).
+        then().log().all().
+            statusCode(200).
+            body("id", equalTo(existingCalendarEventInFuture.getId().intValue())).
+            body("name", equalTo("New Event Name")).
+            body("description", equalTo(existingCalendarEventInFuture.getDescription())).
+            body("venue", equalTo(existingCalendarEventInFuture.getVenue())).
+            body("calendarEventDateTime", equalTo(existingCalendarEventInFuture.getFormattedEventDateTime()));
     }
 }
