@@ -12,7 +12,7 @@ spring:
     password:
 
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: none
     show-sql: true
     format-sql: true
 
@@ -39,7 +39,7 @@ spring:
     password:
 
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: none
     show-sql: true
     format-sql: true
 ---
@@ -53,7 +53,7 @@ spring:
     driverClassName: org.postgresql.Driver
 
   jpa:
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: none
     show-sql: true
     format-sql: true
 

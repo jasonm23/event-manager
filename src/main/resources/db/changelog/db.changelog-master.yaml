@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: gabe & mike
+      changes:
+        - createTable:
+            tableName: calendar_event
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primarykey: true
+                    nullable: false
+              - column:
+                  name: calendar_event_date_time
+                  type: datetime
+              - column:
+                  name: calendar_event_date_time_string
+                  type: varchar
+              - column:
+                  name: cancelled
+                  type: boolean
+              - column:
+                  name: description
+                  type: varchar
+              - column:
+                  name: venue
+                  type: varchar
+              - column:
+                  name: username
+                  type: varchar
+
+  - changeSet:
+      id: 2
+      author: gabe & mike
+      changes:
+        - createTable:
+            tableName: rsvp
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primarykey: true
+                    nullable: false
+              - column:
+                  name: calendar_event_id
+                  type: bigint
+              - column:
+                  name: response
+                  type: varchar
+              - column:
+                  name: username
+                  type: varchar
