@@ -16,5 +16,5 @@ public interface CalendarEventProjection {
     String getCalendarEventDateTime();
     Boolean getCancelled();
 
-    List<Rsvp> getRsvps();
+     List<Rsvp> getRsvps();
 }

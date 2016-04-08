@@ -2,7 +2,6 @@ package com.pinkpony.service;
 
 import com.pinkpony.config.MarvinMediaTypes;
 import com.pinkpony.model.CalendarEvent;
-import com.pinkpony.model.CalendarEventMessageProjection;
 import com.pinkpony.model.CalendarEventProjection;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.util.GenericMerge;
@@ -77,20 +76,12 @@ public class CalendarEventService {
         CalendarEvent savedEvent = calendarEventRepository.save(calendarEvent);
 
         Resource<?> calendarEventResource;
-        if(isMarvinRequest(request)){
-            CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
-            calendarEventResource = new Resource<>(calendarEventMessageProjection);
-        } else {
-            //wrap our projection in a HateOS resource for response
-            CalendarEventProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventProjection.class, calendarEvent);
-            calendarEventResource = new Resource<>(calendarEventProjection);
-        }
+
+        //wrap our projection in a HateOS resource for response
+        CalendarEventProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventProjection.class, calendarEvent);
+        calendarEventResource = new Resource<>(calendarEventProjection);
 
         return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), calendarEventResource);
-    }
-
-    private boolean isMarvinRequest(HttpServletRequest request) {
-        return request.getHeader("Accept").equals(MarvinMediaTypes.MARVIN_JSON_MEDIATYPE_VALUE);
     }
 
     public Optional<ResponseEntity<ResourceSupport>> ensureValidity(CalendarEvent calendarEvent) {
@@ -153,23 +144,5 @@ public class CalendarEventService {
         RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
         Resource<?> resource = new Resource<>(message);
         return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
-    }
-
-    public ResponseEntity<ResourceSupport> showEvent(Long calendarEventId, HttpServletRequest request) {
-        CalendarEvent calendarEvent = calendarEventRepository.findOne(calendarEventId);
-
-        if (null == calendarEvent)
-            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), null);
-
-        Resource<?> calendarEventResource;
-        if(isMarvinRequest(request)){
-            CalendarEventMessageProjection calendarEventMessageProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventMessageProjection.class, calendarEvent);
-            calendarEventResource = new Resource<>(calendarEventMessageProjection);
-        } else {
-            //wrap our projection in a HateOS resource for response
-            CalendarEventProjection calendarEventProjection = spelAwareProxyProjectionFactory.createProjection(CalendarEventProjection.class, calendarEvent);
-            calendarEventResource = new Resource<>(calendarEventProjection);
-        }
-        return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), calendarEventResource);
     }
 }
