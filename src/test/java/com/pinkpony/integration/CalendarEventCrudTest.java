@@ -7,8 +7,6 @@ import org.joda.time.DateTimeZone;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.format.datetime.standard.DateTimeContext;
-import org.springframework.http.HttpStatus;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -50,14 +48,14 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             accept("application/json").
             contentType(ContentType.JSON).
         when().
-            get(String.format("/calendarEvents/%d", existingCalendarEvent.getId())).
+            get(String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId())).
         then().
             statusCode(200).
-            body("name", equalTo(existingCalendarEvent.getName())).
-            body("description", equalTo(existingCalendarEvent.getDescription())).
-            body("venue", equalTo(existingCalendarEvent.getVenue())).
-            body("username", equalTo(existingCalendarEvent.getUsername())).
-            body("calendarEventDateTime", equalTo(existingCalendarEvent.getCalendarEventDateTimeString())).
+            body("name", equalTo(existingCalendarEventInFuture.getName())).
+            body("description", equalTo(existingCalendarEventInFuture.getDescription())).
+            body("venue", equalTo(existingCalendarEventInFuture.getVenue())).
+            body("username", equalTo(existingCalendarEventInFuture.getUsername())).
+            body("calendarEventDateTime", equalTo(existingCalendarEventInFuture.getCalendarEventDateTimeString())).
             body(not(hasItem("message"))).
             body(not(hasItem("message_type")));
     }
@@ -75,7 +73,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
         given().
             contentType(ContentType.JSON).
         when().
-            get(String.format("/calendarEvents/%s/rsvps", existingCalendarEvent.getId())).
+            get(String.format("/calendarEvents/%s/rsvps", existingCalendarEventInFuture.getId())).
         then().
             statusCode(200).
             body("_embedded.rsvps[0].username", containsString("Billy")).
@@ -94,7 +92,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
 
     @Test
     public void viewEventDetailsIncludingRsvpsViaProjection() {
-        CalendarEvent event = existingCalendarEvent;
+        CalendarEvent event = existingCalendarEventInFuture;
         event = addRsvp(event, "yes", "Ron");
         event = addRsvp(event, "no", "Hermione");
 
@@ -148,7 +146,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
 
         JSONObject params = new JSONObject();
         params.put("username", "Joe");
-        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
+        String putUri = String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId());
 
         given().
                 contentType(ContentType.JSON).
@@ -182,14 +180,14 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             then().
                 statusCode(400).
                 body("errors[0].entity", equalTo("CalendarEvent")).
-                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.inPast", null, LocaleContextHolder.getLocale())));
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.eventHasAlreadyStarted", null, LocaleContextHolder.getLocale())));
     }
 
     @Test
     public void disallowPUTMethodForUpdateEvent() {
 
         JSONObject params = new JSONObject();
-        String putUri = String.format("/calendarEvents/%d", existingCalendarEvent.getId());
+        String putUri = String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId());
 
         given().
                 contentType(ContentType.JSON).
@@ -198,5 +196,45 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 put(putUri).
             then().
                 statusCode(405);
+    }
+
+    @Test
+    public void testPatchUpdateEventDateTimeInPastIsInvalid() throws Exception {
+        String newDateTimeString = CalendarEvent.dateFormat.format(DateTime.now().minusDays(2).toDate());
+        JSONObject params = new JSONObject();
+        params.put("calendarEventDateTime", newDateTimeString);
+        params.put("username", existingCalendarEventInFuture.getUsername());
+
+        String patchUri = String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId());
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+            when().
+                patch(patchUri).
+            then().
+                statusCode(400).
+                body("errors[0].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.cantSetDateInPast", null, LocaleContextHolder.getLocale())));
+
+    }
+
+    @Test
+    public void patchEventDateTimeWithFutureTimeSucceeds() throws Exception {
+        String newDateTimeString = CalendarEvent.dateFormat.format(DateTime.now().plusDays(2).toDate());
+        JSONObject params = new JSONObject();
+        params.put("calendarEventDateTime", newDateTimeString);
+        params.put("username", existingCalendarEventInFuture.getUsername());
+
+        String patchUri = String.format("/calendarEvents/%d", existingCalendarEventInFuture.getId());
+
+        given().
+                contentType(ContentType.JSON).
+                body(params.toString()).
+            when().
+                patch(patchUri).
+            then().
+                statusCode(200).
+                body("calendarEventDateTime", equalTo(newDateTimeString));
+
     }
 }

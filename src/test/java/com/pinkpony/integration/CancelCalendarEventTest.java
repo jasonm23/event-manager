@@ -23,16 +23,16 @@ public class CancelCalendarEventTest extends PinkPonyIntegrationBase {
         RestAssured.port = port;
         calendarEventDate = (new DateTime(DateTimeZone.forID("UTC")).plusDays(1).toDate());
 
-        existingCalendarEvent = new CalendarEvent();
-        existingCalendarEvent.setName("BG Night");
-        existingCalendarEvent.setDescription("A Big Night of CalendarEventness");
-        existingCalendarEvent.setVenue("That amazing place");
-        existingCalendarEvent.setCalendarEventDateTime(calendarEventDate);
-        existingCalendarEvent.setCancelled(false);
-        existingCalendarEvent.setUsername("Joe");
-        calendarEventRepository.save(existingCalendarEvent);
+        existingCalendarEventInFuture = new CalendarEvent();
+        existingCalendarEventInFuture.setName("BG Night");
+        existingCalendarEventInFuture.setDescription("A Big Night of CalendarEventness");
+        existingCalendarEventInFuture.setVenue("That amazing place");
+        existingCalendarEventInFuture.setCalendarEventDateTime(calendarEventDate);
+        existingCalendarEventInFuture.setCancelled(false);
+        existingCalendarEventInFuture.setUsername("Joe");
+        calendarEventRepository.save(existingCalendarEventInFuture);
 
-        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, existingCalendarEvent.getId());
+        cancelUri = String.format("http://localhost:%d/cancelledEvents/%d", port, existingCalendarEventInFuture.getId());
     }
 
     @After
