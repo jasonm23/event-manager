@@ -16,7 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,7 +32,6 @@ public class CalendarEventCancelServiceTest {
     CalendarEventService eventService;
 
     CalendarEvent event;
-    Map<String, String> eventData;
 
     @Before
     public void setup() {
@@ -37,74 +39,30 @@ public class CalendarEventCancelServiceTest {
         event.setUsername("Frankel");
         event.setCancelled(false);
 
-        eventData = new HashMap<>();
-        eventData.put("username", "Frankel");
-        eventData.put("cancelled", "true");
-
         when(eventRepository.findOne(event.getId())).thenReturn(event);
     }
 
     @Test
-    public void testCancelEventSuccessfully() {
-        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
-
-        assertEquals(HttpStatus.OK,response.getStatusCode());
-
-        assertTrue(response.getBody() instanceof Resource);
-        CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
-        assertEquals(true, cancelledEvent.isCancelled());
+    public void validCancelPersistsTheChange() {
+        Boolean result = eventService.cancelEvent(event.getId(), event.getUsername());
+        verify(eventRepository, times(1)).save(event);
     }
 
     @Test
-    public void testCancelEventWithWrongOrganizerValue() {
-        eventData.put("username", "Lynwood");
-
-        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
-
-        assertEquals(HttpStatus.FORBIDDEN,response.getStatusCode());
-        CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
-        assertEquals(false, cancelledEvent.isCancelled());
+    public void validCancelReturnsTrue() {
+        Boolean result = eventService.cancelEvent(event.getId(), event.getUsername());
+        assertTrue(result);
     }
 
     @Test
-    public void cancelCalendarEventWithWrongOrganiserKey(){
-        eventData.remove("username");
-        eventData.put("name", "Frankel");
-
-        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
-
-        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
-        CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
-        assertEquals(false, cancelledEvent.isCancelled());
+    public void cantCancelWithWrongUsername() {
+        Boolean result = eventService.cancelEvent(event.getId(), "wrongUser");
+        assertFalse(result);
     }
 
     @Test
-    public void cancelSameEventMultipleTimes() {
-        ResponseEntity response = eventService.cancelEvent(event.getId(), eventData);
-
-        assertEquals(HttpStatus.OK,response.getStatusCode());
-
-        assertTrue(response.getBody() instanceof Resource);
-        CalendarEvent cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
-        assertEquals(true, cancelledEvent.isCancelled());
-
-
-        assertEquals(HttpStatus.OK,response.getStatusCode());
-
-        assertTrue(response.getBody() instanceof Resource);
-        cancelledEvent = (CalendarEvent)((Resource)response.getBody()).getContent();
-        assertEquals(true, cancelledEvent.isCancelled());
-    }
-
-    @Test
-    public void cancelNonExistingEvent() {
-        ResponseEntity response = eventService.cancelEvent(100L, eventData);
-
-        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
-    }
-
-    @Test
-    public void patchEventWithNonExistingEvent() {
-
+    public void cantCancelWithoutValidEventId() {
+        Boolean result = eventService.cancelEvent(-1L, event.getUsername());
+        assertFalse(result);
     }
 }

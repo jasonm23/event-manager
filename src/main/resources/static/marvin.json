@@ -25,6 +25,16 @@
       "method": "POST",
       "defaultResponseSuccess": "You have RSVP`d",
       "defaultResponseFailure": "RSVP create failed: EVERYTHING IS HORRIBLE!!!!"
+    },
+    {
+      "name": "cancel",
+      "arguments": [
+        {"id": "/(\\d+)/"}
+      ],
+      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}/cancel",
+      "method": "PATCH",
+      "defaultResponseSuccess" : "The event `{name}` has been cancelled.",
+      "defaultResponseFailure": "Could not cancel the event. =-("
     }
   ]
 }

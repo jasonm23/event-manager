@@ -42,32 +42,23 @@ public class CalendarEventService {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    public ResponseEntity<?> cancelEvent(Long eventId, Map<String, String> eventParams) {
+    public Boolean cancelEvent(CalendarEvent event, String username) {
+        return cancelEvent(event.getId(), username);
+    }
+
+    public Boolean cancelEvent(Long eventId, String username) {
         CalendarEvent event = calendarEventRepository.findOne(eventId);
 
-        if( event == null ) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(""); }
-
-        Resource<CalendarEvent> resource = new Resource<CalendarEvent>(event);
-
-        if (missingUsername(eventParams)){ return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resource); }
-
-        if (usernameMismatch(eventParams, event)) { return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resource); }
-
-        if(! event.isCancelled()) {
+        if (null == event || ! event.hasUsername(username)) {
+            return false;
+        }
+        else {
             event.cancel();
             calendarEventRepository.save(event);
+            return true;
         }
-
-        return ResponseEntity.ok(resource);
     }
 
-    private boolean usernameMismatch(Map<String, String> calendarEventMap, CalendarEvent originalCalendarEvent) {
-        return ! originalCalendarEvent.getUsername().equals(calendarEventMap.get("username"));
-    }
-
-    private boolean missingUsername(Map<String, String> calendarEventMap) {
-        return calendarEventMap.get("username") == null;
-    }
 
     public  ResponseEntity<ResourceSupport> createEvent(CalendarEvent calendarEvent, HttpServletRequest request) {
         Optional<ResponseEntity<ResourceSupport>> optionalErrorResource = ensureValidity(calendarEvent);
@@ -140,6 +131,7 @@ public class CalendarEventService {
         if (eventOwner != null && ! originalCalendarEvent.getUsername().equals(eventOwner)){
             return validateConstraint("username", "calendarEvent.username.field.mismatch", calendarEventMap);
         }
+
 
         Resource<?> originalResource = new Resource<>(originalCalendarEvent);
         return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), originalResource);
