@@ -135,6 +135,6 @@ public class CalendarEvent implements Serializable {
     }
 
     public String showMessage() {
-        return String.format("\\n> %s at %s on %s view details via /marvin event details %d\\n", getName(), getVenue(), getCalendarEventDateTimeString(), getId());
+        return String.format("\n> %s at %s on %s view details via /marvin event details %d\n", getName(), getVenue(), getCalendarEventDateTimeString(), getId());
     }
 }
