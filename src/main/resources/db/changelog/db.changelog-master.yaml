@@ -55,3 +55,14 @@ databaseChangeLog:
               - column:
                   name: username
                   type: varchar
+
+  - changeSet:
+      id: 3
+      author: James & Papa Feb.
+      changes:
+        - addColumn:
+            columns:
+            - column:
+                name: name
+                type: varchar(255)
+            tableName: calendar_event

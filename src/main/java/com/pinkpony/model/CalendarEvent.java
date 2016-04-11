@@ -27,7 +27,8 @@ public class CalendarEvent implements Serializable {
     public List<Rsvp> rsvps = new ArrayList<Rsvp>();
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "calendar_event_id_seq")
+    @SequenceGenerator(name = "calendar_event_id_seq", sequenceName = "calendar_event_id_seq", allocationSize = 1)
     private Long id;
 
     private String name;

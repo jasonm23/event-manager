@@ -12,7 +12,8 @@ public class Rsvp {
     @JoinColumn(name = "calendar_event_id")
     public CalendarEvent calendarEvent;
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "rsvp_id_seq")
+    @SequenceGenerator(name = "rsvp_id_seq", sequenceName = "rsvp_id_seq", allocationSize = 1)
     Long id;
     String username;
     String response;
