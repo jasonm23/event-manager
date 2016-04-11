@@ -56,6 +56,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("venue", equalTo(existingCalendarEventInFuture.getVenue())).
             body("username", equalTo(existingCalendarEventInFuture.getUsername())).
             body("calendarEventDateTime", equalTo(existingCalendarEventInFuture.getCalendarEventDateTimeString())).
+            body("cancelled", equalTo(false)).
             body(not(hasItem("message"))).
             body(not(hasItem("message_type")));
     }
