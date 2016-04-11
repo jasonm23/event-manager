@@ -17,6 +17,11 @@ public class UpcomingCalendarEventTest extends PinkPonyIntegrationBase {
     private DateTime tomorrow = today.plusDays(1);
     private DateTime nextWeek = today.plusWeeks(1);
 
+    private CalendarEvent pastEvent;
+    private CalendarEvent futureEventTmr;
+    private CalendarEvent futureCancelledEvent;
+    private CalendarEvent futureEventNextWeek;
+
     private String upcomingUrl = "/calendarEvents/search/upcomingEvents";
 
     /*
@@ -28,22 +33,7 @@ public class UpcomingCalendarEventTest extends PinkPonyIntegrationBase {
      */
     @Test
     public void getUpcomingEvents() {
-        calendarEventRepository.deleteAll();
-
-        CalendarEvent pastEvent = makeCalendarEvent(yesterday.toDate());
-        pastEvent.setName("past event");
-        CalendarEvent futureEventTmr = makeCalendarEvent(tomorrow.toDate());
-        futureEventTmr.setName("future event");
-        CalendarEvent futureCancelledEvent = makeCalendarEvent(tomorrow.toDate());
-        futureCancelledEvent.setName("future cancelled event");
-        futureCancelledEvent.setCancelled(true);
-        CalendarEvent futureEventNextWeek = makeCalendarEvent(nextWeek.toDate());
-        futureEventNextWeek.setName("future event next week");
-
-        calendarEventRepository.save(pastEvent);
-        calendarEventRepository.save(futureEventNextWeek);
-        calendarEventRepository.save(futureEventTmr);
-        calendarEventRepository.save(futureCancelledEvent);
+        setupUpcomingEvents();
 
         given().
             contentType(ContentType.JSON).
@@ -56,5 +46,38 @@ public class UpcomingCalendarEventTest extends PinkPonyIntegrationBase {
             body("_embedded.calendarEvents[0].calendarEventDateTime", equalTo(dateFormat.format(tomorrow.toDate()))).
             body("_embedded.calendarEvents[1].name", equalTo("future event next week")).
             body("_embedded.calendarEvents[1].calendarEventDateTime", equalTo(dateFormat.format(nextWeek.toDate())));
+    }
+
+    @Test
+    public void getUpcomingEventsShowsMessageViaProjection() {
+        String upcomingProjectionUrl = "/calendarEvents/upcomingMessage";
+        setupUpcomingEvents();
+
+        given().
+            contentType(ContentType.JSON).
+        when().
+            get(upcomingProjectionUrl).
+        then().
+            statusCode(200).
+            body("content", equalTo(String.format("%s%s", futureEventTmr.showMessage(), futureEventNextWeek.showMessage())));
+    }
+
+    private void setupUpcomingEvents() {
+        calendarEventRepository.deleteAll();
+
+        pastEvent = makeCalendarEvent(yesterday.toDate());
+        pastEvent.setName("past event");
+        futureEventTmr = makeCalendarEvent(tomorrow.toDate());
+        futureEventTmr.setName("future event");
+        futureCancelledEvent = makeCalendarEvent(tomorrow.toDate());
+        futureCancelledEvent.setName("future cancelled event");
+        futureCancelledEvent.setCancelled(true);
+        futureEventNextWeek = makeCalendarEvent(nextWeek.toDate());
+        futureEventNextWeek.setName("future event next week");
+
+        calendarEventRepository.save(pastEvent);
+        calendarEventRepository.save(futureEventNextWeek);
+        calendarEventRepository.save(futureEventTmr);
+        calendarEventRepository.save(futureCancelledEvent);
     }
 }

@@ -60,6 +60,16 @@
       "defaultResponseSuccess": "The Event:\\n {name}\\n\\n*{description}*\\nAt {calendarEventDateTime}\\n\\n## Attendees:\\n{rsvps:\\n}",
       "defaultResponseSuccessType": "channel",
       "defaultResponseFailure": "Could not view event details"
+    },
+    {
+      "name": "upcoming",
+      "arguments": [
+      ],
+      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/upcomingMessage",
+      "method": "GET",
+      "defaultResponseSuccess": "Upcoming Events:\n> {content}",
+      "defaultResponseSuccessType": "channel",
+      "defaultResponseFailure": "Could not view upcoming events"
     }
   ]
 }

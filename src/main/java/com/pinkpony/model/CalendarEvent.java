@@ -133,4 +133,8 @@ public class CalendarEvent implements Serializable {
     public Boolean hasUsername(String username) {
         return this.getUsername().equals(username);
     }
+
+    public String showMessage() {
+        return String.format("> %s at %s on %s view details via /marvin event details %d/n", getName(), getVenue(), getCalendarEventDateTimeString(), getId());
+    }
 }

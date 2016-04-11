@@ -91,6 +91,31 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
     }
 
     @Test
+    public void viewEventsShowBasicInformation() {
+        CalendarEvent secondEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
+
+        given().
+                contentType(ContentType.JSON).
+            when().
+                get(String.format("/calendarEvents")).
+            then().
+                statusCode(200).
+                body("_embedded.calendarEvents", hasSize(2)).
+                body("_embedded.calendarEvents[0].name", equalTo(existingCalendarEventInFuture.getName())).
+                body("_embedded.calendarEvents[0].description", equalTo(existingCalendarEventInFuture.getDescription())).
+                body("_embedded.calendarEvents[0].venue", equalTo(existingCalendarEventInFuture.getVenue())).
+                body("_embedded.calendarEvents[0].calendarEventDateTime", equalTo(existingCalendarEventInFuture.getCalendarEventDateTimeString())).
+                body("_embedded.calendarEvents[0].username", equalTo(existingCalendarEventInFuture.getUsername())).
+                body("_embedded.calendarEvents[0].rsvps", equalTo(null)).
+                body("_embedded.calendarEvents[1].name", equalTo(secondEvent.getName())).
+                body("_embedded.calendarEvents[1].description", equalTo(secondEvent.getDescription())).
+                body("_embedded.calendarEvents[1].venue", equalTo(secondEvent.getVenue())).
+                body("_embedded.calendarEvents[1].calendarEventDateTime", equalTo(secondEvent.getCalendarEventDateTimeString())).
+                body("_embedded.calendarEvents[1].username", equalTo(secondEvent.getUsername())).
+                body("_embedded.calendarEvents[1].rsvps", equalTo(null));
+    }
+
+    @Test
     public void viewEventDetailsIncludingRsvpsViaProjection() {
         CalendarEvent event = existingCalendarEventInFuture;
         event = addRsvp(event, "yes", "Ron");

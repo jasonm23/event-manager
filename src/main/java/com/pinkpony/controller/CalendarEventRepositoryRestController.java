@@ -42,6 +42,11 @@ public class CalendarEventRepositoryRestController {
         return calendarEventService.createEvent(calendarEvent, request);
     }
 
+    @RequestMapping(value="/calendarEvents/upcomingMessage", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<ResourceSupport> getEvents() {
+        return calendarEventService.showUpcomingEventMessage();
+    }
+
     public ResponseEntity<ResourceSupport> statusResponse(HttpStatus status, Map<String, String> params) {
         Resource<Map<String, String>> defaultResourceMap = new Resource<>(params);
         return ResponseEntity.status(status).body(defaultResourceMap);
