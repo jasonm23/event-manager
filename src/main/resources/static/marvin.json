@@ -67,7 +67,7 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/upcomingMessage",
       "method": "GET",
-      "defaultResponseSuccess": "Upcoming Events:\n> {content}",
+      "defaultResponseSuccess": "Upcoming Events:\n{content}",
       "defaultResponseSuccessType": "channel",
       "defaultResponseFailure": "Could not view upcoming events"
     }
