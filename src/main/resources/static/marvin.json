@@ -37,6 +37,18 @@
       "defaultResponseSuccess" : "The event `{name}` has been cancelled.",
       "defaultResponseSuccessType": "channel",
       "defaultResponseFailure": "Could not cancel the event. =-("
+    },
+    {
+      "name": "update",
+      "arguments": [
+        {"id": "/(\\d+)/"},
+        {"attribute": "/(\\w+)[\\s]*=/"},
+        {"value": "/(.+)/"}
+      ],
+      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}",
+      "method": "PATCH",
+      "defaultResponseSuccess" : "Event {id} has been updated. The new values are `{name}` `{description}` `{venue}` `{calendarEventDateTime}`",
+      "defaultResponseFailure": "Could not cancel the event. =-("
     }
   ]
 }

@@ -1,6 +1,5 @@
 package com.pinkpony.service;
 
-import com.pinkpony.config.MarvinMediaTypes;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.model.CalendarEventProjection;
 import com.pinkpony.repository.CalendarEventRepository;

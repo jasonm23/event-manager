@@ -1,6 +1,5 @@
 package com.pinkpony.controller;
 
-import com.pinkpony.config.MarvinMediaTypes;
 import com.pinkpony.model.CalendarEvent;
 import com.pinkpony.repository.CalendarEventRepository;
 import com.pinkpony.service.CalendarEventService;
@@ -11,13 +10,11 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 
 @RepositoryRestController
