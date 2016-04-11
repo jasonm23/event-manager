@@ -14,7 +14,7 @@
       "method": "POST",
       "defaultResponseSuccess": "> Created:\n> *{name}*\n> \n> _{description}_ \n> At {venue}\n> On {calendarEventDateTime}\n> \n> _Attendees:_\n> {rsvps:\n> }",
       "defaultResponseSuccessType": "channel",
-      "defaultResponseFailure": "Event create failed: *EVERYTHING IS HORRIBLE!!!!*\n{errors:\n}"
+      "defaultResponseFailure": "> Event create failed: *EVERYTHING IS HORRIBLE!!!!*\n{errors:\n}"
     },
     {
       "name": "rsvp",
@@ -57,9 +57,9 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}",
       "method": "GET",
-      "defaultResponseSuccess": ">The Event:\n> *{name}*\n> \n> _{description}_ \n> \n> Cancelled: {cancelled}\n> At {venue}\n> On {calendarEventDateTime}\n> \n> _Attendees:_\n> {rsvps:\n> }",
+      "defaultResponseSuccess": "> The Event:\n> *{name}*\n> \n> _{description}_ \n> \n> Cancelled: {cancelled}\n> At {venue}\n> On {calendarEventDateTime}\n> \n> _Attendees:_\n> {rsvps:\n> }",
       "defaultResponseSuccessType": "channel",
-      "defaultResponseFailure": "Could not view event details"
+      "defaultResponseFailure": "> Could not view event details"
     },
     {
       "name": "upcoming",
@@ -67,9 +67,9 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/upcomingMessage",
       "method": "GET",
-      "defaultResponseSuccess": "Upcoming Events:\n{content}",
+      "defaultResponseSuccess": "> Upcoming Events:\n{content}",
       "defaultResponseSuccessType": "channel",
-      "defaultResponseFailure": "Could not view upcoming events"
+      "defaultResponseFailure": "> Could not view upcoming events"
     }
   ]
 }
