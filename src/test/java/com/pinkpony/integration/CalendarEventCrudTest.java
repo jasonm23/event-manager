@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.ArrayList;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -88,6 +90,52 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
             body("_embedded.rsvps[4].response", containsString("no")).
             body("_embedded.rsvps[5].username", containsString("Heng")).
             body("_embedded.rsvps[5].response", containsString("no"));
+    }
+
+    @Test
+    public void viewEventsShowBasicInformation() {
+        CalendarEvent secondEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
+
+        given().
+                contentType(ContentType.JSON).
+            when().
+                get(String.format("/calendarEvents")).
+            then().
+                statusCode(200).
+                body("_embedded.calendarEvents", hasSize(2)).
+                body("_embedded.calendarEvents[0].name", equalTo(existingCalendarEventInFuture.getName())).
+                body("_embedded.calendarEvents[0].description", equalTo(existingCalendarEventInFuture.getDescription())).
+                body("_embedded.calendarEvents[0].venue", equalTo(existingCalendarEventInFuture.getVenue())).
+                body("_embedded.calendarEvents[0].calendarEventDateTime", equalTo(existingCalendarEventInFuture.getCalendarEventDateTimeString())).
+                body("_embedded.calendarEvents[0].username", equalTo(existingCalendarEventInFuture.getUsername())).
+                body("_embedded.calendarEvents[0].message", equalTo(null)).
+                body("_embedded.calendarEvents[0].messageType", equalTo(null)).
+                body("_embedded.calendarEvents[0].rsvps", equalTo(null)).
+                body("_embedded.calendarEvents[1].name", equalTo(secondEvent.getName())).
+                body("_embedded.calendarEvents[1].description", equalTo(secondEvent.getDescription())).
+                body("_embedded.calendarEvents[1].venue", equalTo(secondEvent.getVenue())).
+                body("_embedded.calendarEvents[1].calendarEventDateTime", equalTo(secondEvent.getCalendarEventDateTimeString())).
+                body("_embedded.calendarEvents[1].username", equalTo(secondEvent.getUsername())).
+                body("_embedded.calendarEvents[1].message", equalTo(null)).
+                body("_embedded.calendarEvents[1].messageType", equalTo(null)).
+                body("_embedded.calendarEvents[1].rsvps", equalTo(null));
+    }
+
+    @Test
+    public void viewEventsShowMessageViaProjection() {
+        CalendarEvent secondEvent = calendarEventRepository.save(makeCalendarEvent(calendarEventDate));
+
+        given().
+                contentType(ContentType.JSON).
+            when().
+                get(String.format("/calendarEvents?projection=messageCalendarEvent")).
+            then().
+                statusCode(200).
+                body("_embedded.calendarEvents", hasSize(2)).
+                body("_embedded.calendarEvents[0].message", equalTo(existingCalendarEventInFuture.showMessage())).
+                body("_embedded.calendarEvents[0].messageType", equalTo("channel")).
+                body("_embedded.calendarEvents[1].message", equalTo(secondEvent.showMessage())).
+                body("_embedded.calendarEvents[1].messageType", equalTo("channel"));
     }
 
     @Test

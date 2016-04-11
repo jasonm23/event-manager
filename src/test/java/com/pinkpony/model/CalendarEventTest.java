@@ -31,4 +31,15 @@ public class CalendarEventTest {
         event.cancel();
         assertTrue(event.isCancelled());
     }
+
+    @Test
+    public void testMessage() {
+        CalendarEvent event = new CalendarEvent();
+        event.setName("Game Night");
+        event.setVenue("The deck");
+        event.setCalendarEventDateTimeString("2016-11-12T11:22:33+08:00");
+        event.setId(1L);
+
+        assertEquals("Game Night at The deck on 2016-11-12T11:22:33+08:00 view details via /marvin event details 1", event.showMessage());
+    }
 }
