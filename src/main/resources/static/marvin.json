@@ -45,7 +45,7 @@
         {"attribute": "/(\\w+)[\\s]*=/"},
         {"value": "/(.+)/"}
       ],
-      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}",
+      "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/update",
       "method": "PATCH",
       "defaultResponseSuccess" : "> Event {id} has been updated. The new values are `{name}` `{description}` `{venue}` `{calendarEventDateTime}`",
       "defaultResponseFailure": "> Could not update the event. =-("
