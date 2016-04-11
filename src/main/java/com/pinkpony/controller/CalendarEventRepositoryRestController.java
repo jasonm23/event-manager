@@ -82,6 +82,11 @@ public class CalendarEventRepositoryRestController {
         return calendarEventService.patchEvent(calendarEventId, calendarEventMap);
     }
 
+    @RequestMapping(value="/calendarEvents/update", method = RequestMethod.PATCH)
+    public @ResponseBody ResponseEntity<ResourceSupport> marvinUpdateEvent(@RequestBody Map<String, String> marvinCalendarEventMap) {
+        return calendarEventService.marvinUpdateEvent(marvinCalendarEventMap);
+    }
+
     @RequestMapping(value="/calendarEvents/{calendarEventId}", method = RequestMethod.PUT)
     public @ResponseBody ResponseEntity<ResourceSupport> updateEvent(@PathVariable Long calendarEventId) {
         return ControllerUtils.toResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, new HttpHeaders(), null);
