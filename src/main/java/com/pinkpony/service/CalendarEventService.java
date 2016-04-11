@@ -85,6 +85,7 @@ public class CalendarEventService {
         return Optional.empty();
     }
 
+    // Assumption: username is always passed in
     public ResponseEntity<ResourceSupport> patchEvent(Long calendarEventId, Map<String, String> calendarEventMap) {
         // Mutate calendarEventMap: remove the meta data we don't use
         removeMetadata(calendarEventMap);
@@ -174,5 +175,25 @@ public class CalendarEventService {
         Resource<?> resource = new Resource<>(buffer);
         return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), resource);
 
+    }
+
+    public ResponseEntity<ResourceSupport> marvinUpdateEvent(Map<String, String> marvinCalendarEventMap) {
+        BindingResult binder = new MapBindingResult(marvinCalendarEventMap, "CalendarEvent");
+        if(null == marvinCalendarEventMap.get("id")) { binder.rejectValue("id", "marvinUpdateMap.id.field.empty"); }
+        if(null == marvinCalendarEventMap.get("attribute")) { binder.rejectValue("attribute", "marvinUpdateMap.attribute.field.empty"); }
+        if(null == marvinCalendarEventMap.get("value")) { binder.rejectValue("value", "marvinUpdateMap.value.field.empty"); }
+
+        if(binder.hasErrors()) {
+            RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
+            Resource<?> resource = new Resource<>(message);
+            return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
+        }
+
+        Long calendarEventId = Long.parseLong(marvinCalendarEventMap.get("id"));
+        Map<String, String> calendarEventMap = new HashMap<>();
+        calendarEventMap.put(marvinCalendarEventMap.get("attribute"), marvinCalendarEventMap.get("value"));
+        calendarEventMap.put("username", marvinCalendarEventMap.get("username"));
+
+        return patchEvent(calendarEventId, calendarEventMap);
     }
 }
