@@ -115,4 +115,19 @@ public class CalendarEventPatchServiceTest {
         assertTrue(resource.getContent() instanceof CalendarEvent);
 
     }
+
+    @Test
+    public void patchIgnoresUnusedMetadata() {
+        eventData.put("name", "new name");
+        eventData.put("channel", "#testchannel");
+        eventData.put("received_at", "2025-05-05T11:11:11+00:00");
+        eventData.put("command", "/marvin event update name=new name");
+
+        ResponseEntity<ResourceSupport> response = eventService.patchEvent(event.getId(), eventData);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Resource resource = (Resource)response.getBody();
+        assertTrue(resource.getContent() instanceof CalendarEvent);
+
+    }
 }

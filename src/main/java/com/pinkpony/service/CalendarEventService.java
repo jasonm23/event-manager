@@ -88,6 +88,8 @@ public class CalendarEventService {
     }
 
     public ResponseEntity<ResourceSupport> patchEvent(Long calendarEventId, Map<String, String> calendarEventMap) {
+        // Mutate calendarEventMap: remove the meta data we don't use
+        removeMetadata(calendarEventMap);
 
         String eventOwner = calendarEventMap.get("username");
 
@@ -146,6 +148,12 @@ public class CalendarEventService {
         Resource<?> updatedResource = new Resource<>(updatedCalendarEvent);
         return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), updatedResource);
 
+    }
+
+    private void removeMetadata(Map<String, String> calendarEventMap) {
+        calendarEventMap.remove("received_at");
+        calendarEventMap.remove("channel");
+        calendarEventMap.remove("command");
     }
 
     private ResponseEntity<ResourceSupport> validateConstraint(String fieldName, String i18nMessage, Map<String, String> calendarEventMap) {
