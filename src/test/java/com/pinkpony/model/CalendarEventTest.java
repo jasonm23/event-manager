@@ -40,6 +40,6 @@ public class CalendarEventTest {
         event.setCalendarEventDateTimeString("2016-11-12T11:22:33+08:00");
         event.setId(1L);
 
-        assertEquals("Game Night at The deck on 2016-11-12T11:22:33+08:00 view details via /marvin event details 1", event.showMessage());
+        assertEquals("> Game Night at The deck on 2016-11-12T11:22:33+08:00 view details via /marvin event details 1/n", event.showMessage());
     }
 }

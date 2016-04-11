@@ -24,9 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CalendarEventService {
@@ -155,5 +153,18 @@ public class CalendarEventService {
         RepositoryConstraintViolationExceptionMessage message = new RepositoryConstraintViolationExceptionMessage(new RepositoryConstraintViolationException(binder), new MessageSourceAccessor(messageSource));
         Resource<?> resource = new Resource<>(message);
         return ControllerUtils.toResponseEntity(HttpStatus.BAD_REQUEST, new HttpHeaders(), resource);
+    }
+
+    public ResponseEntity<ResourceSupport> showUpcomingEventMessage() {
+        List<CalendarEvent> upcomingEvents = calendarEventRepository.findUpcomingEvent();
+        StringBuffer buffer = new StringBuffer("");
+
+        for( CalendarEvent event : upcomingEvents) {
+            buffer.append(event.showMessage());
+        }
+
+        Resource<?> resource = new Resource<>(buffer);
+        return ControllerUtils.toResponseEntity(HttpStatus.OK, new HttpHeaders(), resource);
+
     }
 }

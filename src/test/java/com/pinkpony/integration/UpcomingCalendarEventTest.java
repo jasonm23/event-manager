@@ -50,20 +50,16 @@ public class UpcomingCalendarEventTest extends PinkPonyIntegrationBase {
 
     @Test
     public void getUpcomingEventsShowsMessageViaProjection() {
-        String upcomingProjectionUrl = String.format("%s?projection=messageCalendarEvent", upcomingUrl);
+        String upcomingProjectionUrl = "/calendarEvents/upcomingMessage";
         setupUpcomingEvents();
 
         given().
-                contentType(ContentType.JSON).
-                when().
-                get(upcomingProjectionUrl).
-                then().
-                statusCode(200).
-                body("_embedded.calendarEvents", hasSize(2)).
-                body("_embedded.calendarEvents[0].message", equalTo(futureEventTmr.showMessage())).
-                body("_embedded.calendarEvents[0].messageType", equalTo("channel")).
-                body("_embedded.calendarEvents[1].message", equalTo(futureEventNextWeek.showMessage())).
-                body("_embedded.calendarEvents[1].messageType", equalTo("channel"));
+            contentType(ContentType.JSON).
+        when().
+            get(upcomingProjectionUrl).
+        then().
+            statusCode(200).
+            body("content", equalTo(String.format("%s%s", futureEventTmr.showMessage(), futureEventNextWeek.showMessage())));
     }
 
     private void setupUpcomingEvents() {
