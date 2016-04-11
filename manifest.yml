@@ -1,7 +1,8 @@
 ---
 applications:
-  - name: dev-pinkpony
-    path: target/pinkpony.jar
-    buildpack: java_buildpack
-    services:
-      - dev-pinkturtle
+- name: dev-pinkpony
+  path: target/pinkpony.jar
+  buildpack: java_buildpack
+  services:
+    - dev-pinkturtle
+    - pegasus
