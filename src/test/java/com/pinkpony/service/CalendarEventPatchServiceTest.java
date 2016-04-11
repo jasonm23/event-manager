@@ -113,5 +113,6 @@ public class CalendarEventPatchServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Resource resource = (Resource)response.getBody();
         assertTrue(resource.getContent() instanceof CalendarEvent);
+
     }
 }

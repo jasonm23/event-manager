@@ -12,9 +12,9 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/",
       "method": "POST",
-      "defaultResponseSuccess": "# {name}\\n\\n*{description}*\\nAt {calendarEventDateTime}\\n\\n## Attendees:\\n{rsvps:\\n}",
+      "defaultResponseSuccess": "> Created:\n> *{name}*\n> \n> _{description}_ \n> At {venue}\n> On {calendarEventDateTime}\n> \n> _Attendees:_\n> {rsvps:\n> }",
       "defaultResponseSuccessType": "channel",
-      "defaultResponseFailure": "Event create failed: *EVERYTHING IS HORRIBLE!!!!*\\n{errors:\\n}"
+      "defaultResponseFailure": "Event create failed: *EVERYTHING IS HORRIBLE!!!!*\n{errors:\n}"
     },
     {
       "name": "rsvp",
@@ -24,8 +24,8 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/rsvps",
       "method": "POST",
-      "defaultResponseSuccess": "# You have RSVP`d {response}",
-      "defaultResponseFailure": "RSVP create failed: *EVERYTHING IS HORRIBLE!!!!*\\n{errors:\\n}"
+      "defaultResponseSuccess": "> You have RSVP`d {response}",
+      "defaultResponseFailure": "> RSVP create failed: *EVERYTHING IS HORRIBLE!!!!*\n> {errors:\n> }"
     },
     {
       "name": "cancel",
@@ -34,9 +34,9 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}/cancel",
       "method": "PATCH",
-      "defaultResponseSuccess" : "The event `{name}` has been cancelled.",
+      "defaultResponseSuccess" : "> The event `{name}` has been cancelled.",
       "defaultResponseSuccessType": "channel",
-      "defaultResponseFailure": "Could not cancel the event. =-("
+      "defaultResponseFailure": "> Could not cancel the event. =-("
     },
     {
       "name": "update",
@@ -47,8 +47,8 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}",
       "method": "PATCH",
-      "defaultResponseSuccess" : "Event {id} has been updated. The new values are `{name}` `{description}` `{venue}` `{calendarEventDateTime}`",
-      "defaultResponseFailure": "Could not cancel the event. =-("
+      "defaultResponseSuccess" : "> Event {id} has been updated. The new values are `{name}` `{description}` `{venue}` `{calendarEventDateTime}`",
+      "defaultResponseFailure": "> Could not cancel the event. =-("
     },
     {
       "name": "details",
@@ -57,7 +57,7 @@
       ],
       "endpoint": "http://dev-pinkpony.cfapps.io/calendarEvents/{id}",
       "method": "GET",
-      "defaultResponseSuccess": "The Event:\\n {name}\\n\\n*{description}*\\nAt {calendarEventDateTime}\\n\\n## Attendees:\\n{rsvps:\\n}",
+      "defaultResponseSuccess": ">The Event:\n> *{name}*\n> \n> _{description}_ \n> At {venue}\n> On {calendarEventDateTime}\n> \n> _Attendees:_\n> {rsvps:\n> }",
       "defaultResponseSuccessType": "channel",
       "defaultResponseFailure": "Could not view event details"
     }
