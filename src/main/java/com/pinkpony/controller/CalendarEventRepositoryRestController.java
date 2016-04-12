@@ -39,7 +39,7 @@ public class CalendarEventRepositoryRestController {
         return calendarEventService.showUpcomingEventMessage();
     }
 
-    public ResponseEntity<ResourceSupport> statusResponse(HttpStatus status, Map<String, String> params) {
+    private ResponseEntity<ResourceSupport> statusResponse(HttpStatus status, Map<String, String> params) {
         Resource<Map<String, String>> defaultResourceMap = new Resource<>(params);
         return ResponseEntity.status(status).body(defaultResourceMap);
     }

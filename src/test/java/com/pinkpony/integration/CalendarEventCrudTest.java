@@ -143,7 +143,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
     public void badRequestOnErrors() throws Exception {
         JSONObject params = new JSONObject();
         params.put("description", "A Big Night of Eventness");
-        params.put("calendarEventDateTime", "not a date");
+        params.put("calendarEventDateTime", "I am a banana");
         params.put("username", "Joe");
         params.put("venue", "Arrowhead Lounge");
 
@@ -164,7 +164,7 @@ public class CalendarEventCrudTest extends PinkPonyIntegrationBase {
                 body("errors[1].entity", equalTo("CalendarEvent")).
                 body("errors[1].message", equalTo(messageSource.getMessage("calendarEvent.calendarEventDateTime.field.invalid", null, LocaleContextHolder.getLocale()))).
                 body("errors[1].property", equalTo("calendarEventDateTimeString")).
-                body("errors[1].invalidValue", equalTo("not a date"));
+                body("errors[1].invalidValue", equalTo("I am a banana"));
     }
 
     @Test
