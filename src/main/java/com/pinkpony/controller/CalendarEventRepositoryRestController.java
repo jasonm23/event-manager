@@ -29,14 +29,6 @@ public class CalendarEventRepositoryRestController {
     @Autowired
     CalendarEventRepository calendarEventRepository;
 
-    private boolean usernameMismatch(CalendarEvent event, String username) {
-        return ! event.getUsername().equals(username);
-    }
-
-    private boolean missingUsername(Map<String, String> calendarEventMap) {
-        return calendarEventMap.get("username") == null;
-    }
-
     @RequestMapping(value="/calendarEvents", method = RequestMethod.POST )
     public @ResponseBody ResponseEntity<ResourceSupport> createEvent( @RequestBody CalendarEvent calendarEvent, HttpServletRequest request) {
         return calendarEventService.createEvent(calendarEvent, request);
