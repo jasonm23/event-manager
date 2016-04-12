@@ -12,8 +12,6 @@ import java.util.List;
 
 @RepositoryRestResource
 public interface CalendarEventRepository extends PagingAndSortingRepository<CalendarEvent, Long> {
-    List<CalendarEvent> findByCalendarEventDateTimeAfter(Date date);
-
     @RestResource(path = "upcomingEvents")
     @Query(value = "SELECT * FROM calendar_event WHERE calendar_event_date_time >= NOW() AND cancelled = 'f' ORDER BY calendar_event_date_time ASC;", nativeQuery = true)
     List<CalendarEvent> findUpcomingEvent();
